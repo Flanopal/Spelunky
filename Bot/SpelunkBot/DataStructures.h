@@ -1,4 +1,9 @@
 #pragma once
+
+#include <functional>
+
+using namespace std;
+
 struct Coordinates
 {
 public:
@@ -7,4 +12,12 @@ public:
 	int x;
 	int y;
 	int objectType;
+};
+
+class Command
+{
+public:
+	Command(int id, function<void()> func) :identifier(id), callback(func) {}
+	int identifier;
+	function<void()> callback;
 };

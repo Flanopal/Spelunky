@@ -37,6 +37,18 @@
     <Filter Include="Source Files\BotFramework">
       <UniqueIdentifier>{a4056e1e-ac87-46b4-a2a3-0d809f0971d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\BotFramework\MemberClasses">
+      <UniqueIdentifier>{6f428b5c-c194-407c-8b8f-da8d97e4f208}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\BotFramework\MemeberClasses">
+      <UniqueIdentifier>{9334da7d-f038-4ea5-bc0c-2b8dd980d78c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\BotFramework\MemeberClasses\Movements">
+      <UniqueIdentifier>{e8cc904e-6b6a-4e5e-ab40-efe5c58138a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BotFramework\MemberClasses\Movements">
+      <UniqueIdentifier>{5c7779e1-68d8-4112-acbb-f0b9feec9e13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -81,17 +93,26 @@
     <ClInclude Include="DataStructures.h">
       <Filter>Header Files\BotFramework</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyControl.h">
-      <Filter>Header Files\BotFramework</Filter>
-    </ClInclude>
     <ClInclude Include="FrameworkLibrary.h">
-      <Filter>Header Files\BotFramework</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerMovements.h">
       <Filter>Header Files\BotFramework</Filter>
     </ClInclude>
     <ClInclude Include="MyBot.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyControl.h">
+      <Filter>Header Files\BotFramework\MemeberClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="IBotAPI.h">
+      <Filter>Header Files\BotFramework</Filter>
+    </ClInclude>
+    <ClInclude Include="PathExecuting.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Movements</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerActions.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Movements</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolsActions.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Movements</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -134,11 +155,23 @@
     <ClCompile Include="MyBot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyControl.cpp">
+    <ClCompile Include="FrameworkLibrary.cpp">
       <Filter>Source Files\BotFramework</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerMovements.cpp">
+    <ClCompile Include="EnemyControl.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="IBotAPI.cpp">
       <Filter>Source Files\BotFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="PathExecuting.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\Movements</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerActions.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\Movements</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolsActions.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\Movements</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

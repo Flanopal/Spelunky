@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "EnemyControl.h"
+/*#include "EnemyControl.h"
 
 vector<unique_ptr<Coordinates>> EnemyControl::GetEnemiesInDistance(int distance)
 {
@@ -44,8 +44,4 @@ Coordinates EnemyControl::EnemyInArea(int nodeX, int nodeY)
 	int nodeValue;
 	nodeValue = bot->GetIDOfEnemyInNode(0, nodeX, nodeY, 0);
 	return finalCoordinates;
-}
-void EnemyControl::DestroyEnemy(int nodeX, int nodeY)
-{
-
-}
+}*/
