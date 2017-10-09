@@ -49,6 +49,9 @@
     <Filter Include="Source Files\BotFramework\MemberClasses\Movements">
       <UniqueIdentifier>{5c7779e1-68d8-4112-acbb-f0b9feec9e13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\BotFramework\MemeberClasses\Space control">
+      <UniqueIdentifier>{7cfc52ed-136d-4fac-b263-f498b4195360}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -99,19 +102,22 @@
     <ClInclude Include="MyBot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyControl.h">
-      <Filter>Header Files\BotFramework\MemeberClasses</Filter>
-    </ClInclude>
     <ClInclude Include="IBotAPI.h">
       <Filter>Header Files\BotFramework</Filter>
-    </ClInclude>
-    <ClInclude Include="PathExecuting.h">
-      <Filter>Header Files\BotFramework\MemeberClasses\Movements</Filter>
     </ClInclude>
     <ClInclude Include="PlayerActions.h">
       <Filter>Header Files\BotFramework\MemeberClasses\Movements</Filter>
     </ClInclude>
     <ClInclude Include="ToolsActions.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Movements</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyControl.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Space control</Filter>
+    </ClInclude>
+    <ClInclude Include="MovementExecuting.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Movements</Filter>
+    </ClInclude>
+    <ClInclude Include="MovementExecutingWrapper.h">
       <Filter>Header Files\BotFramework\MemeberClasses\Movements</Filter>
     </ClInclude>
   </ItemGroup>
@@ -164,13 +170,16 @@
     <ClCompile Include="IBotAPI.cpp">
       <Filter>Source Files\BotFramework</Filter>
     </ClCompile>
-    <ClCompile Include="PathExecuting.cpp">
-      <Filter>Source Files\BotFramework\MemberClasses\Movements</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerActions.cpp">
       <Filter>Source Files\BotFramework\MemberClasses\Movements</Filter>
     </ClCompile>
     <ClCompile Include="ToolsActions.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\Movements</Filter>
+    </ClCompile>
+    <ClCompile Include="MovementExecutingWrapper.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\Movements</Filter>
+    </ClCompile>
+    <ClCompile Include="MovementExecuting.cpp">
       <Filter>Source Files\BotFramework\MemberClasses\Movements</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,10 +3,17 @@
 
 void MyBot::Update()
 {
-	int k = 0;
-	lib->Update(&k);
-	//_lookUp = true;
-	//vector<unique_ptr<Coordinates>> k = lib->enemyControl->GetEnemiesInDistance(10);
-	/*if (k.size() > 0)*/
-	//	_jump = true;
+	int j = 0;
+	lib->Update(&j);
+	if (k < -20)
+	{
+		lib->playerActions->movements->StartMovingLeft(make_unique<function<bool()>>(bind(&MyBot::right, this)));
+		lib->playerActions->movements->Jump();
+	}
+	else if (k > 20)
+	{
+		lib->playerActions->movements->StartMovingRight(make_unique<function<bool()>>(bind(&MyBot::left, this)));
+		lib->playerActions->movements->Jump();
+	}
+	
 }

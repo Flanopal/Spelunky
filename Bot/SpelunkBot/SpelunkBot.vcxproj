@@ -122,9 +122,10 @@
     <ClInclude Include="GoldDigger.h" />
     <ClInclude Include="IBot.h" />
     <ClInclude Include="Indie.h" />
+    <ClInclude Include="MovementExecutingWrapper.h" />
     <ClInclude Include="MyBot.h" />
     <ClInclude Include="NotSoSolidSnake.h" />
-    <ClInclude Include="PathExecuting.h" />
+    <ClInclude Include="MovementExecuting.h" />
     <ClInclude Include="PlayerActions.h" />
     <ClInclude Include="SeanBean.h" />
     <ClInclude Include="stdafx.h" />
@@ -154,9 +155,10 @@
     <ClCompile Include="GoldDigger.cpp" />
     <ClCompile Include="IBot.cpp" />
     <ClCompile Include="Indie.cpp" />
+    <ClCompile Include="MovementExecutingWrapper.cpp" />
     <ClCompile Include="MyBot.cpp" />
     <ClCompile Include="NotSoSolidSnake.cpp" />
-    <ClCompile Include="PathExecuting.cpp" />
+    <ClCompile Include="MovementExecuting.cpp" />
     <ClCompile Include="PlayerActions.cpp" />
     <ClCompile Include="SeanBean.cpp" />
     <ClCompile Include="stdafx.cpp">

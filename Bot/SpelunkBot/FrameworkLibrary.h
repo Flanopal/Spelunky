@@ -21,6 +21,5 @@ public:
 	//unique_ptr<EnemyControl> enemyControl;
 	unique_ptr<PlayerActions> playerActions;
 private:	
-	int k = 0;
 	IBotAPI* bot;
 };
