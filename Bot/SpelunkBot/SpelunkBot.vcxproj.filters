@@ -43,14 +43,29 @@
     <Filter Include="Header Files\BotFramework\MemeberClasses">
       <UniqueIdentifier>{9334da7d-f038-4ea5-bc0c-2b8dd980d78c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\BotFramework\MemeberClasses\Movements">
-      <UniqueIdentifier>{e8cc904e-6b6a-4e5e-ab40-efe5c58138a3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\BotFramework\MemberClasses\Movements">
-      <UniqueIdentifier>{5c7779e1-68d8-4112-acbb-f0b9feec9e13}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\BotFramework\MemeberClasses\Space control">
       <UniqueIdentifier>{7cfc52ed-136d-4fac-b263-f498b4195360}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BotFramework\MemberClasses\SpaceControl">
+      <UniqueIdentifier>{0dc4b1e9-ccd4-4bfa-b22f-d5dfdea59771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\BotFramework\MemeberClasses\Player actions">
+      <UniqueIdentifier>{e8cc904e-6b6a-4e5e-ab40-efe5c58138a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BotFramework\MemberClasses\Player actions">
+      <UniqueIdentifier>{5c7779e1-68d8-4112-acbb-f0b9feec9e13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BotFramework\MemberClasses\Player actions\Movements">
+      <UniqueIdentifier>{1bee9976-c75d-4ae9-9061-0e649e5bfedd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BotFramework\MemberClasses\Player actions\Tools actions">
+      <UniqueIdentifier>{3ad44440-a60a-46b0-b067-699c047e32dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\BotFramework\MemeberClasses\Player actions\Movements">
+      <UniqueIdentifier>{2897d421-0de4-4505-9d27-00976c6aac20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\BotFramework\MemeberClasses\Player actions\Tools actions">
+      <UniqueIdentifier>{6d8dc8e3-f3e5-442c-8d14-f006feccfec2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -93,32 +108,41 @@
     <ClInclude Include="JordanBot.h">
       <Filter>Header Files\Bots\Examples</Filter>
     </ClInclude>
-    <ClInclude Include="DataStructures.h">
-      <Filter>Header Files\BotFramework</Filter>
-    </ClInclude>
-    <ClInclude Include="FrameworkLibrary.h">
-      <Filter>Header Files\BotFramework</Filter>
-    </ClInclude>
     <ClInclude Include="MyBot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IBotAPI.h">
-      <Filter>Header Files\BotFramework</Filter>
+    <ClInclude Include="FrameworkLib\PlayerActions\Movements\BaseMovementClasses.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Player actions\Movements</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerActions.h">
-      <Filter>Header Files\BotFramework\MemeberClasses\Movements</Filter>
+    <ClInclude Include="FrameworkLib\PlayerActions\Movements\MovementExecuting.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Player actions\Movements</Filter>
     </ClInclude>
-    <ClInclude Include="ToolsActions.h">
-      <Filter>Header Files\BotFramework\MemeberClasses\Movements</Filter>
+    <ClInclude Include="FrameworkLib\PlayerActions\Movements\MovementExecutingWrapper.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Player actions\Movements</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyControl.h">
+    <ClInclude Include="FrameworkLib\PlayerActions\Movements\Movements.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Player actions\Movements</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameworkLib\PlayerActions\ToolsActions\ToolsActions.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Player actions\Tools actions</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameworkLib\PlayerActions\PlayerActions.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Player actions</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameworkLib\MapControl\EnemyControl.h">
       <Filter>Header Files\BotFramework\MemeberClasses\Space control</Filter>
     </ClInclude>
-    <ClInclude Include="MovementExecuting.h">
-      <Filter>Header Files\BotFramework\MemeberClasses\Movements</Filter>
+    <ClInclude Include="FrameworkLib\MapControl\MapControl.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Space control</Filter>
     </ClInclude>
-    <ClInclude Include="MovementExecutingWrapper.h">
-      <Filter>Header Files\BotFramework\MemeberClasses\Movements</Filter>
+    <ClInclude Include="FrameworkLib\DataStructures.h">
+      <Filter>Header Files\BotFramework\MemeberClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameworkLib\FrameworkLibrary.h">
+      <Filter>Header Files\BotFramework\MemeberClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameworkLib\IBotAPI.h">
+      <Filter>Header Files\BotFramework\MemeberClasses</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -161,26 +185,35 @@
     <ClCompile Include="MyBot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FrameworkLibrary.cpp">
-      <Filter>Source Files\BotFramework</Filter>
+    <ClCompile Include="FrameworkLib\PlayerActions\Movements\BaseMovementClasses.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\Player actions\Movements</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyControl.cpp">
+    <ClCompile Include="FrameworkLib\PlayerActions\Movements\MovementExecuting.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\Player actions\Movements</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameworkLib\PlayerActions\Movements\MovementExecutingWrapper.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\Player actions\Movements</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameworkLib\PlayerActions\Movements\Movements.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\Player actions\Movements</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameworkLib\PlayerActions\ToolsActions\ToolsActions.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\Player actions\Tools actions</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameworkLib\PlayerActions\PlayerActions.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\Player actions</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameworkLib\MapControl\EnemyControl.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\SpaceControl</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameworkLib\MapControl\MapControl.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\SpaceControl</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameworkLib\FrameworkLibrary.cpp">
       <Filter>Source Files\BotFramework\MemberClasses</Filter>
     </ClCompile>
-    <ClCompile Include="IBotAPI.cpp">
-      <Filter>Source Files\BotFramework</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerActions.cpp">
-      <Filter>Source Files\BotFramework\MemberClasses\Movements</Filter>
-    </ClCompile>
-    <ClCompile Include="ToolsActions.cpp">
-      <Filter>Source Files\BotFramework\MemberClasses\Movements</Filter>
-    </ClCompile>
-    <ClCompile Include="MovementExecutingWrapper.cpp">
-      <Filter>Source Files\BotFramework\MemberClasses\Movements</Filter>
-    </ClCompile>
-    <ClCompile Include="MovementExecuting.cpp">
-      <Filter>Source Files\BotFramework\MemberClasses\Movements</Filter>
+    <ClCompile Include="FrameworkLib\IBotAPI.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

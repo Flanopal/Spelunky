@@ -61,6 +61,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WithTrace|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\..\..\Source\spelunky_1_1\</OutDir>
+    <IncludePath>C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib\MapControl;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib\PlayerActions;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib\PlayerActions\Movements;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib\PlayerActions\ToolsActions;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -111,10 +112,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicBotExampleOne.h" />
-    <ClInclude Include="DataStructures.h" />
-    <ClInclude Include="EnemyControl.h" />
-    <ClInclude Include="FrameworkLibrary.h" />
-    <ClInclude Include="IBotAPI.h" />
+    <ClInclude Include="FrameworkLib\DataStructures.h" />
+    <ClInclude Include="FrameworkLib\FrameworkLibrary.h" />
+    <ClInclude Include="FrameworkLib\IBotAPI.h" />
+    <ClInclude Include="FrameworkLib\MapControl\EnemyControl.h" />
+    <ClInclude Include="FrameworkLib\MapControl\MapControl.h" />
+    <ClInclude Include="FrameworkLib\PlayerActions\Movements\BaseMovementClasses.h" />
+    <ClInclude Include="FrameworkLib\PlayerActions\Movements\MovementExecuting.h" />
+    <ClInclude Include="FrameworkLib\PlayerActions\Movements\MovementExecutingWrapper.h" />
+    <ClInclude Include="FrameworkLib\PlayerActions\Movements\Movements.h" />
+    <ClInclude Include="FrameworkLib\PlayerActions\PlayerActions.h" />
+    <ClInclude Include="FrameworkLib\PlayerActions\ToolsActions\ToolsActions.h" />
     <ClInclude Include="JordanBot.h" />
     <ClInclude Include="Bot.h" />
     <ClInclude Include="DiscoveryDan.h" />
@@ -122,21 +130,24 @@
     <ClInclude Include="GoldDigger.h" />
     <ClInclude Include="IBot.h" />
     <ClInclude Include="Indie.h" />
-    <ClInclude Include="MovementExecutingWrapper.h" />
     <ClInclude Include="MyBot.h" />
     <ClInclude Include="NotSoSolidSnake.h" />
-    <ClInclude Include="MovementExecuting.h" />
-    <ClInclude Include="PlayerActions.h" />
     <ClInclude Include="SeanBean.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="ToolsActions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasicBotExampleOne.cpp" />
-    <ClCompile Include="EnemyControl.cpp" />
-    <ClCompile Include="FrameworkLibrary.cpp" />
-    <ClCompile Include="IBotAPI.cpp" />
+    <ClCompile Include="FrameworkLib\FrameworkLibrary.cpp" />
+    <ClCompile Include="FrameworkLib\IBotAPI.cpp" />
+    <ClCompile Include="FrameworkLib\MapControl\EnemyControl.cpp" />
+    <ClCompile Include="FrameworkLib\MapControl\MapControl.cpp" />
+    <ClCompile Include="FrameworkLib\PlayerActions\Movements\BaseMovementClasses.cpp" />
+    <ClCompile Include="FrameworkLib\PlayerActions\Movements\MovementExecuting.cpp" />
+    <ClCompile Include="FrameworkLib\PlayerActions\Movements\MovementExecutingWrapper.cpp" />
+    <ClCompile Include="FrameworkLib\PlayerActions\Movements\Movements.cpp" />
+    <ClCompile Include="FrameworkLib\PlayerActions\PlayerActions.cpp" />
+    <ClCompile Include="FrameworkLib\PlayerActions\ToolsActions\ToolsActions.cpp" />
     <ClCompile Include="JordanBot.cpp" />
     <ClCompile Include="DiscoveryDan.cpp" />
     <ClCompile Include="dllmain.cpp">
@@ -155,18 +166,14 @@
     <ClCompile Include="GoldDigger.cpp" />
     <ClCompile Include="IBot.cpp" />
     <ClCompile Include="Indie.cpp" />
-    <ClCompile Include="MovementExecutingWrapper.cpp" />
     <ClCompile Include="MyBot.cpp" />
     <ClCompile Include="NotSoSolidSnake.cpp" />
-    <ClCompile Include="MovementExecuting.cpp" />
-    <ClCompile Include="PlayerActions.cpp" />
     <ClCompile Include="SeanBean.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='WithTrace|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ToolsActions.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

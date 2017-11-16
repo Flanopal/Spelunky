@@ -10,33 +10,23 @@ using namespace std;
 class MyBot : public IBotAPI
 {
 public:
-	MyBot() 
+	MyBot():action(nullptr)
 	{ 
 #if WithTrace
 		cout << "\n\nMy bot constructed\n";
 		cout << "--------Framework Output-----------\n";
 #endif
 		lib = make_unique<FrameworkLibrary>(this);
-		lib->playerActions->movements->StartMovingLeft(make_unique<function<bool()>>(bind(&MyBot::right, this)));
-	}
-	bool left() 
-	{ 
-		if (k < -20)
-			return false;
-		--k;
-		return true; 
-	}
-	bool right() 
-	{ 
-		if (k > 20) 
-			return false;
-		++k;
-		return true; 
+		lib->mapControl->FindExit();
+		action = lib->playerActions->movements->SideMoveAt(10);
+		action->Start();
 	}
 	void Update() override;
 	~MyBot() { }
 private:
-	int k = 0;
+	bool switched = false;
+	bool climbing = false;
+	int count = -1;
 	unique_ptr<FrameworkLibrary> lib;
-	int moveCount = 0;
+	unique_ptr<ActionHandler> action;
 };
