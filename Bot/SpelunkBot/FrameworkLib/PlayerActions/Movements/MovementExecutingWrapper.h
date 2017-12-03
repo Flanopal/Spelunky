@@ -26,6 +26,9 @@ public:
 	bool StartCrouching(unique_ptr<function<void()>> callback);
 	void StopHorizontalMoving();
 	void StopVerticalMoving();
+	
+	bool RegisterUpdateCallback(unique_ptr<function<void()>> callback);
+	void RemoveUpdateCallback();
 	void Jump(int ticks);
 private:
 	void MoveCallback();
@@ -33,5 +36,6 @@ private:
 
 	unique_ptr<function<void()>> horizontalMovingCallback;
 	unique_ptr<function<void()>> verticalMovingCallback;
+	unique_ptr<function<void()>> updateCallback;
 	unique_ptr<MovementExecuting> executor;
 };

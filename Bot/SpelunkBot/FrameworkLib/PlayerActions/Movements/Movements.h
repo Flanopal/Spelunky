@@ -25,6 +25,7 @@ public:
 	unique_ptr<ActionHandler> SideMoveAt(double coordX);
 	unique_ptr<ActionHandler> JumpTo(Coordinates coords);
 	unique_ptr<ActionHandler> ClimbToLevel(double lvl);
+	unique_ptr<ActionHandler> LeaveClimable(LeaveDirection direction);
 	void Jump();
 private:
 	unique_ptr<MovementExecutingWrapper> movementWrapper;

@@ -117,6 +117,7 @@
     <ClInclude Include="FrameworkLib\IBotAPI.h" />
     <ClInclude Include="FrameworkLib\MapControl\EnemyControl.h" />
     <ClInclude Include="FrameworkLib\MapControl\MapControl.h" />
+    <ClInclude Include="FrameworkLib\MapControl\PathSearch.h" />
     <ClInclude Include="FrameworkLib\PlayerActions\Movements\BaseMovementClasses.h" />
     <ClInclude Include="FrameworkLib\PlayerActions\Movements\MovementExecuting.h" />
     <ClInclude Include="FrameworkLib\PlayerActions\Movements\MovementExecutingWrapper.h" />
@@ -142,6 +143,7 @@
     <ClCompile Include="FrameworkLib\IBotAPI.cpp" />
     <ClCompile Include="FrameworkLib\MapControl\EnemyControl.cpp" />
     <ClCompile Include="FrameworkLib\MapControl\MapControl.cpp" />
+    <ClCompile Include="FrameworkLib\MapControl\PathSearch.cpp" />
     <ClCompile Include="FrameworkLib\PlayerActions\Movements\BaseMovementClasses.cpp" />
     <ClCompile Include="FrameworkLib\PlayerActions\Movements\MovementExecuting.cpp" />
     <ClCompile Include="FrameworkLib\PlayerActions\Movements\MovementExecutingWrapper.cpp" />

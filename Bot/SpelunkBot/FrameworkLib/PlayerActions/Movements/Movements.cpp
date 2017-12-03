@@ -15,7 +15,7 @@ unique_ptr<ActionHandler> Movements::MoveRightFor(int distance)
 }
 unique_ptr<ActionHandler> Movements::SideMoveAt(double coordX)
 {
-	return make_unique<BaseMVClasses::SideMoveAt>(&*movementWrapper,bot,coordX);
+	return make_unique<BaseMVClasses::SideMoveAt>(lib, bot, &*movementWrapper, coordX);
 }
 unique_ptr<ActionHandler> Movements::JumpTo(Coordinates coords)
 {
@@ -24,6 +24,10 @@ unique_ptr<ActionHandler> Movements::JumpTo(Coordinates coords)
 unique_ptr<ActionHandler> Movements::ClimbToLevel(double lvl)
 {
 	return make_unique<BaseMVClasses::ClimbToNodeLevel>(lib, bot, &*movementWrapper,lvl);
+}
+unique_ptr<ActionHandler> Movements::LeaveClimable(LeaveDirection direction)
+{
+	return make_unique<BaseMVClasses::LeaveClimbing>(lib, bot, &*movementWrapper, direction);
 }
 void Movements::Jump()
 {

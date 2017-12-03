@@ -71,6 +71,18 @@ void MovementExecutingWrapper::StopVerticalMoving()
 	verticalMovingCallback = nullptr;
 	cout << "Vertical movement stopped\n";
 }
+
+bool MovementExecutingWrapper::RegisterUpdateCallback(unique_ptr<function<void()>> callback)
+{
+	if (updateCallback != nullptr) return false;
+	else updateCallback = move(callback);
+	return true;
+}
+void MovementExecutingWrapper::RemoveUpdateCallback()
+{
+	updateCallback = nullptr;
+}
+
 void MovementExecutingWrapper::Jump(int ticks)
 {
 	cout << "Jump\n";
@@ -84,4 +96,6 @@ void MovementExecutingWrapper::MoveCallback()
 		(*horizontalMovingCallback)();
 	if (verticalMovingCallback != nullptr)
 		(*verticalMovingCallback)();
+	if (updateCallback != nullptr)
+		(*updateCallback)();
 }

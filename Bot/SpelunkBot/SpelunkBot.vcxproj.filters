@@ -144,6 +144,9 @@
     <ClInclude Include="FrameworkLib\IBotAPI.h">
       <Filter>Header Files\BotFramework\MemeberClasses</Filter>
     </ClInclude>
+    <ClInclude Include="FrameworkLib\MapControl\PathSearch.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Space control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -214,6 +217,9 @@
     </ClCompile>
     <ClCompile Include="FrameworkLib\IBotAPI.cpp">
       <Filter>Source Files\BotFramework\MemberClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameworkLib\MapControl\PathSearch.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\SpaceControl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

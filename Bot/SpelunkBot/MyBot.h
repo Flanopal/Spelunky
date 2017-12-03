@@ -17,9 +17,12 @@ public:
 		cout << "--------Framework Output-----------\n";
 #endif
 		lib = make_unique<FrameworkLibrary>(this);
-		lib->mapControl->FindExit();
-		action = lib->playerActions->movements->SideMoveAt(10);
+		action = lib->playerActions->movements->MoveRightFor(240);
 		action->Start();
+		lib->mapControl->CoutFrame();
+		lib->mapControl->CoutMap();
+		/*action = lib->playerActions->movements->SideMoveAt(10);
+		action->Start();*/
 	}
 	void Update() override;
 	~MyBot() { }

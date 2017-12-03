@@ -4,7 +4,7 @@
 void MovementExecuting::Update()
 {
 	size_t size = actions.size();
-	for (int i = 0; i < size; ++i)
+	for (size_t i = 0; i < size; ++i)
 	{		
 		actions[i]->callback();
 	}
@@ -86,6 +86,7 @@ void MovementExecuting::LookUpStop()
 	if (_up)
 	{
 		RemoveCallback(Identifier::Up);
+		bot->SetLookUp(false);
 		_up = false;
 	}
 }
@@ -98,7 +99,7 @@ void MovementExecuting::CrouchStart()
 {
 	if (!_crouch)
 	{
-		bot->SetDuck(true);
+		actions.push_back(&*crouch);
 		_crouch = true;
 	}
 }
@@ -106,6 +107,7 @@ void MovementExecuting::CrouchStop()
 {
 	if (_crouch)
 	{
+		RemoveCallback(Identifier::Crouch);
 		bot->SetDuck(false);
 		_crouch = false;
 	}
@@ -118,7 +120,7 @@ bool MovementExecuting::IsCrouching()
 void MovementExecuting::RemoveCallback(Identifier id)
 {
 	size_t size = actions.size();
-	for (int i = 0; i < size; ++i)
+	for (size_t i = 0; i < size; ++i)
 	{
 		if (actions[i]->identifier == (int)id)
 			actions.erase(actions.begin() + i); // remove action from vector
@@ -136,6 +138,10 @@ void MovementExecuting::MoveLeft()
 void MovementExecuting::Jump()
 {
 	bot->SetJump(true);
+}
+void MovementExecuting::Crouch()
+{
+	bot->SetDuck(true);
 }
 void MovementExecuting::LookUp()
 {

@@ -7,6 +7,7 @@
 using namespace std;
 
 enum class ActionState { waiting, runnig, finished, terminated };
+enum class LeaveDirection { stay = 0, right, left };
 
 struct Coordinates
 {

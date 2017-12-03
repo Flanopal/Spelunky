@@ -19,7 +19,6 @@ void BaseMVClasses::MoveFor::Stop()
 
 void BaseMVClasses::MoveFor::MyCallback()
 {
-	cout << "MoveCall\n";
 	if (dist <= 1)
 	{
 		if (dist == 1)
@@ -72,17 +71,8 @@ void BaseMVClasses::SideMoveAt::MyCallback()
 	}
 	else
 	{
-		if (curPos == previousPos)
-		{
-			++samePlaceTime;
-			if (samePlaceTime == samePlaceTimeLimit)
-				Stop();
-		}
-		else
-		{
-			samePlaceTime = 0;
-			previousPos = curPos;
-		}
+		if (!controler->Update())
+			Stop();
 	}
 	callParentCallback();
 }
@@ -118,13 +108,6 @@ void BaseMVClasses::JumpToSpot::MyCallback()
 	if (!lib->mapControl->NodeIsTerrain(X, Y + 1))
 		if (lib->mapControl->NodeIsTerrain(X + 1, Y))
 			lib->playerActions->movements->Jump();
-	/*Coordinates prevPos = lib->GetPrevPossition();
-	double Y = bot->GetPlayerPositionYNode();
-	double X = bot->GetPlayerPositionXNode();
-	if (prevPos.x == X)
-		if (prevPos.y == Y)
-			if (lib->mapControl->NodeIsTerrain(X, Y + 1))
-				Stop();*/
 	callParentCallback();
 }
 
@@ -163,9 +146,45 @@ void BaseMVClasses::ClimbToNodeLevel::MyCallback()
 }
 void BaseMVClasses::ClimbToNodeLevel::Stop()
 {
-	cout << "Stop duck\n";
+	cout << "Stop climbing\n";
 	wrapper->StopVerticalMoving();
 	state = ActionState::terminated;
+}
+
+bool BaseMVClasses::LeaveClimbing::Start()
+{
+	double coordX = bot->GetPlayerPositionXNode();
+	if (dir == LeaveDirection::left) coordX -= 0.6;
+	else if (dir == LeaveDirection::right) coordX += 0.6;
+	if (lib->mapControl->NodeIsTerrain(coordX, bot->GetPlayerPositionYNode())) return false;
+	horizontalMove = lib->playerActions->movements->SideMoveAt(coordX);
+	if (!horizontalMove->Start()) return false;
+	if (!wrapper->RegisterUpdateCallback(make_unique<function<void()>>(bind(&LeaveClimbing::MyCallback, this))))
+	{
+		horizontalMove->Stop();
+		return false;
+	}
+	wrapper->Jump(1);
+	state = ActionState::runnig;
+	return true;
+}
+
+void BaseMVClasses::LeaveClimbing::Stop()
+{
+	horizontalMove->Stop();
+	wrapper->RemoveUpdateCallback();
+	state = ActionState::terminated;
+	cout << "Succesfully leaved\n";
+}
+
+void BaseMVClasses::LeaveClimbing::MyCallback()
+{
+	if (state == ActionState::runnig)
+		if (!controler->Update())
+		{
+			Finish();
+		}
+	callParentCallback();
 }
 
 

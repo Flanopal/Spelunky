@@ -25,7 +25,7 @@ void ToolsActions::Attack()
 void ToolsActions::RemoveCallback(Identifier id)
 {
 	size_t size = actions.size();
-	for (int i = 0; i < size; ++i)
+	for (size_t i = 0; i < size; ++i)
 	{
 		if (actions[i]->identifier == (int)id)
 			actions.erase(actions.begin() + i); // remove action from vector

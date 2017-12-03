@@ -15,15 +15,15 @@ using namespace std;
 class PlayerActions
 {
 public:
-	PlayerActions(IBotAPI* bot,FrameworkLibrary* parent):bot(bot),parentLib(parent)
+	PlayerActions(FrameworkLibrary* lib, IBotAPI* bot):bot(bot),lib(lib)
 	{
-		movements = make_unique<Movements>(bot, parentLib);
-		toolsActions = make_unique<ToolsActions>(bot, parentLib);
+		movements = make_unique<Movements>(bot, lib);
+		toolsActions = make_unique<ToolsActions>(bot, lib);
 	}
 	unique_ptr<Movements> movements;
 	unique_ptr<ToolsActions> toolsActions;
 
 private:
-	FrameworkLibrary* parentLib;
+	FrameworkLibrary* lib;
 	IBotAPI* bot;
 };

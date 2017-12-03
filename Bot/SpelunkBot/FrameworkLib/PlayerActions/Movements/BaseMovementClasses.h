@@ -36,8 +36,9 @@ private:
 class BaseMVClasses::SideMoveAt :public ActionHandler
 {
 public:
-	SideMoveAt(MovementExecutingWrapper* wrapper, IBotAPI* bot, double coordX) : wrapper(wrapper), bot(bot), coordX(coordX), previousPos(0,0)
+	SideMoveAt(FrameworkLibrary* lib, IBotAPI* bot, MovementExecutingWrapper* wrapper, double coordX) : lib(lib),  bot(bot), wrapper(wrapper), coordX(coordX)
 	{
+		controler = make_unique<MovingController>(lib,bot,5);
 	}
 	virtual bool Start();
 	virtual void Stop();
@@ -46,9 +47,8 @@ private:
 	void MyCallback();
 	bool left;
 	double coordX;
-	Coordinates previousPos;
-	int samePlaceTime = 0;
-	const int samePlaceTimeLimit = 5;
+	unique_ptr<MovingController> controler;
+	FrameworkLibrary* lib;
 	MovementExecutingWrapper* wrapper;
 	IBotAPI* bot;
 };
@@ -89,7 +89,23 @@ private:
 	MovementExecutingWrapper* wrapper;
 };
 
-class BaseMVClasses::LeaveClimbing
+class BaseMVClasses::LeaveClimbing :public ActionHandler
 {
-
+public:
+	LeaveClimbing(FrameworkLibrary* lib, IBotAPI* bot, MovementExecutingWrapper* wrapper,LeaveDirection dir)
+		:lib(lib),bot(bot),wrapper(wrapper),dir(dir)
+	{
+		controler = make_unique<MovingController>(lib,bot, 3);
+	}
+	virtual bool Start();
+	virtual void Stop();
+	virtual ~LeaveClimbing() {}
+private:
+	void MyCallback();
+	LeaveDirection dir;
+	unique_ptr<MovingController> controler;
+	unique_ptr<ActionHandler> horizontalMove;
+	FrameworkLibrary* lib;
+	IBotAPI* bot;
+	MovementExecutingWrapper* wrapper;
 };

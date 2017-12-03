@@ -5,9 +5,11 @@ void MyBot::Update()
 {
 	int k = 0;
 	lib->Update(&k);
-	if (action->GetState() != ActionState::runnig)
+	if (action->GetState() == ActionState::finished && count == -1)
 	{
-		lib->playerActions->movements->Jump();
+		lib->mapControl->CoutFrame();
+		lib->mapControl->CoutMap();
+		count++;
 	}
 	/*if (count > -1)
 	{
@@ -35,10 +37,12 @@ void MyBot::Update()
 	if (lib->mapControl->ExitIsFound() && action == nullptr)
 	{
 		cout << exit.x << "\n";
-		action = lib->playerActions->movements->SideMoveAt(exit.x);
+		action = lib->playerActions->movements->SideMoveAt(exit.x+0.5);
 		action->Start();
 	}
-	else if (lib->mapControl->NodeIsClimable(_playerPositionXNode, _playerPositionYNode) && lib->mapControl->NodeIsClimable(_playerPositionXNode, _playerPositionYNode + 2.0))
+	else if (lib->mapControl->NodeIsClimable(_playerPositionXNode, _playerPositionYNode))
+	{
+		if (lib->mapControl->NodeIsClimable(_playerPositionXNode, _playerPositionYNode + 1.0))
 		{
 			if (!climbing)
 			{
@@ -50,10 +54,22 @@ void MyBot::Update()
 				return;
 			}
 		}
-	
+		else if (lib->mapControl->NodeIsClimable(_playerPositionXNode, _playerPositionYNode - 1.0))
+		{
+			if (!climbing)
+			{
+				action->Stop();
+				cout << "Start climbing\n";
+				action = lib->playerActions->movements->ClimbToLevel(0);
+				count = 10;
+				climbing = true;
+				return;
+			}
+		}		
+	}
 	else
 	{
-		double coef =1;
+		double coef = 1;
 		if (lib->mapControl->GetExitPos().x < _playerPositionXNode)
 			coef = -1;
 		if (!switched && lib->mapControl->NodeIsTerrain(_playerPositionXNode + coef, _playerPositionYNode))
@@ -61,7 +77,7 @@ void MyBot::Update()
 			cout << "my y: " << _playerPositionYNode << "     my x: " << _playerPositionXNode << "\n";
 			cout << "Jump, " << _playerPositionXNode + coef << "  " << _playerPositionYNode << "\n";
 			action->Stop();
-			Coordinates coord(_playerPositionXNode + coef*2, _playerPositionYNode - 1);
+			Coordinates coord(_playerPositionXNode + coef * 2, _playerPositionYNode - 1);
 			action = lib->playerActions->movements->JumpTo(coord);
 			action->Start();
 			switched = true;
@@ -69,13 +85,11 @@ void MyBot::Update()
 	}
 	if (climbing && action->GetState() != ActionState::runnig)
 	{
-		//action->Stop();
+		action->Stop();
 		cout << "Leaving ladder\n";
-		/*Coordinates coord(_playerPositionXNode+0.5, _playerPositionYNode);
-		action = lib->playerActions->movements->JumpTo(coord);//
-		lib->playerActions->movements->Jump();
-		action=lib->playerActions->movements->MoveRightFor(7);
-		count = 7;
+		count = 10;
+		action = lib->playerActions->movements->LeaveClimable(LeaveDirection::right);
+		action->Start();
 		climbing = false;
 		return;
 	}

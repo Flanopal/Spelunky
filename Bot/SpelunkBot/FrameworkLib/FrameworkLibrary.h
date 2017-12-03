@@ -4,6 +4,7 @@
 #include <iostream>
 
 class FrameworkLibrary;
+class MovingController;
 
 #include "IBotAPI.h"
 #include "DataStructures.h"
@@ -28,5 +29,31 @@ public:
 private:
 	void UpdatePrevisousPossition();
 	Coordinates previousPossition;
+	IBotAPI* bot;
+};
+
+class MovingController
+{
+public:
+	MovingController(FrameworkLibrary* lib, IBotAPI* bot, int limit) :lib(lib), bot(bot), samePlaceTimeLimit(limit) {}
+	bool Update()
+	{
+		Coordinates curPos(bot->GetPlayerPositionXNode(), bot->GetPlayerPositionYNode());
+		if (curPos == lib->GetPrevPossition())
+		{
+			++samePlaceTime;
+			if (samePlaceTime == samePlaceTimeLimit)
+				return false;
+		}
+		else
+		{
+			samePlaceTime = 0;
+		}
+		return true;
+	}
+private:
+	int samePlaceTime = 0;
+	int samePlaceTimeLimit = 5;
+	FrameworkLibrary* lib;
 	IBotAPI* bot;
 };

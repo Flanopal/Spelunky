@@ -11,20 +11,54 @@ using namespace std;
 class MapControl
 {
 public:
-	MapControl(IBotAPI* bot) :bot(bot), exitPos(-1,-1),exitFound(false)
-	{}
+	MapControl(FrameworkLibrary* lib, IBotAPI* bot) :lib(lib), bot(bot), exitPos(-1,-1),exitFound(false)
+	{
+		top = left = bottom = right = -1;
+		SaveMap();
+	}
+	void Update();
 	bool NodeIsTerrain(double x, double y);
 	bool NodeIsTerrain(Coordinates coords);
 	bool NodeIsClimable(double x, double y);
 	bool NodeIsClimable(Coordinates coords);
-	bool ExitIsFound();
-	void FindExit();
-	Coordinates GetExitPos()
+
+	void CoutFrame()
 	{
-		return exitPos;
+		cout << left << ":" << top << " " << right << ":" << bottom << "\n";
 	}
+
+	void CoutMap()
+	{
+		for (int i = 0; i < 34; ++i)
+		{
+			for (int j = 0; j < 42; ++j)
+			{
+				if (cave[j][i]!=-1)
+					cout << cave[j][i] << " ";
+				else 
+					cout << "x ";
+			}
+			cout << "\n";
+		}
+	}
+
+	bool ExitIsFound();
+
+	void SaveMap();
+	Coordinates GetExitPos();
+	//unique_ptr<PathSearch> pathSearch;
 private:
+	void NodeExitCheck(int x, int y);
+	void UpdateCaveMap();
+	bool VerticalBorderControl(int dx);
+	bool HorizontalBorderControl(int dy);
+	void VerticalBorderUpdate(int& line);
+	void HorizontalBorderUpdate(int& line);
+
+	int top, left, bottom, right;
+	double cave[42][34];
 	bool exitFound;
 	Coordinates exitPos;
+	FrameworkLibrary* lib;
 	IBotAPI* bot;
 };

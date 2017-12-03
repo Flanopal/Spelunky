@@ -28,6 +28,7 @@ enum VariableType
 
 enum TerrainType
 {
+	spUnknownNode = -1,
 	spEmptyNode = 0,
 	spStandardTerrain,
 	spLadder,
