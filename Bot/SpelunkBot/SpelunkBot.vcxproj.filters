@@ -67,6 +67,12 @@
     <Filter Include="Header Files\BotFramework\MemeberClasses\Player actions\Tools actions">
       <UniqueIdentifier>{6d8dc8e3-f3e5-442c-8d14-f006feccfec2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\BotFramework\MemeberClasses\Space control\SearchAlgorithm">
+      <UniqueIdentifier>{4c297327-abd4-47ed-ac7d-7ad018c3a89d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BotFramework\MemberClasses\SpaceControl\SearchAlgorithm">
+      <UniqueIdentifier>{6d5dd8bf-a575-4a7c-a7e7-eb4761f9a638}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -147,6 +153,21 @@
     <ClInclude Include="FrameworkLib\MapControl\PathSearch.h">
       <Filter>Header Files\BotFramework\MemeberClasses\Space control</Filter>
     </ClInclude>
+    <ClInclude Include="FrameworkLib\MapControl\SearchActions.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Space control</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameworkLib\MapControl\ActionFactories.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Space control</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameworkLib\MapControl\SearchAlgorithm\Heuristic.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Space control\SearchAlgorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameworkLib\MapControl\SearchAlgorithm\AStarSearch.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Space control\SearchAlgorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameworkLib\MapControl\SearchAlgorithm\SearchAlgorithmInterfaces.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Space control\SearchAlgorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -220,6 +241,18 @@
     </ClCompile>
     <ClCompile Include="FrameworkLib\MapControl\PathSearch.cpp">
       <Filter>Source Files\BotFramework\MemberClasses\SpaceControl</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameworkLib\MapControl\SearchActions.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\SpaceControl</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameworkLib\MapControl\ActionFactories.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\SpaceControl</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameworkLib\MapControl\SearchAlgorithm\Heuristic.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\SpaceControl\SearchAlgorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameworkLib\MapControl\SearchAlgorithm\AStarSearch.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\SpaceControl\SearchAlgorithm</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

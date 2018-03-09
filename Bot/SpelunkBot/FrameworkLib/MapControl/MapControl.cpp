@@ -2,9 +2,9 @@
 #include "MapControl.h"
 
 
-bool MapControl::NodeIsTerrain(double x, double y)
+bool MapControl::NodeIsTerrain(int x, int y)
 {
-	if (bot->GetNodeState(x, y, NODE_COORDS) == spStandardTerrain)
+	if (cave[x][y] == spStandardTerrain)
 		return true;
 	return false;
 }
@@ -16,10 +16,14 @@ bool MapControl::NodeIsTerrain(Coordinates coords)
 {
 	return NodeIsTerrain(coords.x, coords.y);
 }
-
-bool MapControl::NodeIsClimable(double x, double y)
+bool MapControl::NodeIsTerrain(SearchCoords& coords)
 {
-	if (bot->GetNodeState(x, y, NODE_COORDS) == spLadder)
+	return NodeIsTerrain(coords.y, coords.y);
+}
+
+bool MapControl::NodeIsClimable(int x, int y)
+{
+	if (cave[x][y] == spLadder)
 		return true;
 	// rope
 	return false;
@@ -27,6 +31,16 @@ bool MapControl::NodeIsClimable(double x, double y)
 bool MapControl::NodeIsClimable(Coordinates coords)
 {
 	return NodeIsClimable(coords.x, coords.y);
+}
+bool MapControl::NodeIsClimable(SearchCoords& coords)
+{
+	return NodeIsClimable(coords.x, coords.y);
+}
+
+bool MapControl::NodeIsUnknown(SearchCoords& coords)
+{
+	if (cave[coords.x][coords.y] == spUnknownNode) return true;
+	return false;
 }
 
 bool MapControl::ExitIsFound()

@@ -7,6 +7,7 @@ using namespace std;
 #include "IBotAPI.h"
 #include "FrameworkLibrary.h"
 #include "DataStructures.h"
+#include "PathSearch.h"
 
 class MapControl
 {
@@ -17,11 +18,15 @@ public:
 		SaveMap();
 	}
 	void Update();
-	bool NodeIsTerrain(double x, double y);
+	bool NodeIsTerrain(int x, int y);
 	bool NodeIsTerrain(Coordinates coords);
-	bool NodeIsClimable(double x, double y);
-	bool NodeIsClimable(Coordinates coords);
+	bool NodeIsTerrain(SearchCoords& coords);
 
+	bool NodeIsClimable(int x, int y);
+	bool NodeIsClimable(Coordinates coords);
+	bool NodeIsClimable(SearchCoords& coords);
+
+	bool NodeIsUnknown(SearchCoords& coords);
 	void CoutFrame()
 	{
 		cout << left << ":" << top << " " << right << ":" << bottom << "\n";
@@ -50,6 +55,7 @@ public:
 private:
 	void NodeExitCheck(int x, int y);
 	void UpdateCaveMap();
+
 	bool VerticalBorderControl(int dx);
 	bool HorizontalBorderControl(int dy);
 	void VerticalBorderUpdate(int& line);

@@ -30,6 +30,12 @@ public:
 	function<void()> callback;
 };
 
+class ActionHandlerFactory
+{
+public:
+	virtual unique_ptr<ActionHandler> GetAction(FrameworkLibrary* lib) = 0;
+};
+
 class ActionHandler
 {
 public:
