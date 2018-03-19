@@ -25,3 +25,7 @@ void IBotAPI::SetLookUp(bool value)
 {
 	_lookUp = value;
 }
+Coordinates IBotAPI::GetPlayerCoordinates()
+{
+	return Coordinates(GetPlayerPositionXNode(), GetPlayerPositionYNode());
+}

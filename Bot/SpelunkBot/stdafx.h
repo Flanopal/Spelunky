@@ -30,7 +30,7 @@ enum TerrainType
 {
 	spUnknownNode = -1,
 	spEmptyNode = 0,
-	spStandardTerrain,
+	spStandardTerrain=1,
 	spLadder,
 	spExit,
 	spEntrance,

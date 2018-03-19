@@ -2,17 +2,15 @@
 
 class MapControl;
 
-using namespace std;
-
 #include "IBotAPI.h"
-#include "FrameworkLibrary.h"
 #include "DataStructures.h"
-#include "PathSearch.h"
+
+using namespace std;
 
 class MapControl
 {
 public:
-	MapControl(FrameworkLibrary* lib, IBotAPI* bot) :lib(lib), bot(bot), exitPos(-1,-1),exitFound(false)
+	MapControl(const Coordinates& prevCoords, IBotAPI* bot) :prevPos(prevCoords), bot(bot), exitPos(-1,-1),exitFound(false)
 	{
 		top = left = bottom = right = -1;
 		SaveMap();
@@ -46,12 +44,14 @@ public:
 			cout << "\n";
 		}
 	}
-
+	void CoutNode(int x, int y)
+	{
+		cout << cave[x][y] << endl;
+	}
 	bool ExitIsFound();
 
 	void SaveMap();
 	Coordinates GetExitPos();
-	//unique_ptr<PathSearch> pathSearch;
 private:
 	void NodeExitCheck(int x, int y);
 	void UpdateCaveMap();
@@ -65,6 +65,6 @@ private:
 	double cave[42][34];
 	bool exitFound;
 	Coordinates exitPos;
-	FrameworkLibrary* lib;
+	const Coordinates& prevPos;
 	IBotAPI* bot;
 };

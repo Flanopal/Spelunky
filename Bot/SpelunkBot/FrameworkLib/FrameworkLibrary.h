@@ -11,6 +11,7 @@ class MovingController;
 #include "EnemyControl.h"
 #include "MapControl.h"
 #include "PlayerActions.h"
+#include "PathSearch.h"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ public:
 	bool Update(int* error);
 	//unique_ptr<EnemyControl> enemyControl;
 	unique_ptr<MapControl> mapControl;
+	unique_ptr<PathSearch> pathSearch;
 	unique_ptr<PlayerActions> playerActions;
 	Coordinates GetPrevPossition()
 	{

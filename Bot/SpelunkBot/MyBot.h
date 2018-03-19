@@ -17,10 +17,11 @@ public:
 		cout << "--------Framework Output-----------\n";
 #endif
 		lib = make_unique<FrameworkLibrary>(this);
-		action = lib->playerActions->movements->MoveRightFor(240);
+		action = lib->playerActions->movements->MoveRightFor(1);
 		action->Start();
-		lib->mapControl->CoutFrame();
-		lib->mapControl->CoutMap();
+		//lib->mapControl->CoutFrame();
+		//lib->mapControl->CoutMap();
+
 		/*action = lib->playerActions->movements->SideMoveAt(10);
 		action->Start();*/
 	}
@@ -28,8 +29,6 @@ public:
 	~MyBot() { }
 private:
 	bool switched = false;
-	bool climbing = false;
-	int count = -1;
 	unique_ptr<FrameworkLibrary> lib;
 	unique_ptr<ActionHandler> action;
 };

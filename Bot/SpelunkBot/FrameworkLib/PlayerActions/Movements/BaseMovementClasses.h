@@ -11,6 +11,7 @@ public:
 	class JumpToSpot;
 	class ClimbToNodeLevel;
 	class LeaveClimbing;
+	class ClimbToNodeLevelAndEscapeLadder;
 };
 
 #include "MovementExecutingWrapper.h"
@@ -108,4 +109,24 @@ private:
 	FrameworkLibrary* lib;
 	IBotAPI* bot;
 	MovementExecutingWrapper* wrapper;
+};
+
+class BaseMVClasses::ClimbToNodeLevelAndEscapeLadder :public ActionHandler
+{
+public:
+	ClimbToNodeLevelAndEscapeLadder(FrameworkLibrary* lib, IBotAPI* bot, MovementExecutingWrapper* wrapper, double targetLvl)
+	{
+		climb = make_unique<ClimbToNodeLevel>(lib, bot, wrapper, targetLvl);
+		climb->registrCallback(make_unique<function<void()>>(bind(&ClimbToNodeLevelAndEscapeLadder::MyCallback, this)));
+		escape = make_unique<LeaveClimbing>(lib, bot, wrapper, LeaveDirection::stay);
+		escape->registrCallback(make_unique<function<void()>>(bind(&ClimbToNodeLevelAndEscapeLadder::MyCallback, this)));
+	}
+	virtual bool Start();
+	virtual void Stop();
+	virtual ActionState GetState();
+	virtual ~ClimbToNodeLevelAndEscapeLadder() {}
+private:
+	void MyCallback();
+	unique_ptr<ActionHandler> climb;
+	unique_ptr<ActionHandler> escape;
 };

@@ -18,7 +18,7 @@ bool MapControl::NodeIsTerrain(Coordinates coords)
 }
 bool MapControl::NodeIsTerrain(SearchCoords& coords)
 {
-	return NodeIsTerrain(coords.y, coords.y);
+	return NodeIsTerrain(coords.x, coords.y);
 }
 
 bool MapControl::NodeIsClimable(int x, int y)
@@ -102,7 +102,7 @@ void MapControl::UpdateCaveMap()
 {
 	double x = bot->GetPlayerPositionXNode();
 	double y = bot->GetPlayerPositionYNode();
-	Coordinates prevPos = lib->GetPrevPossition();
+	//Coordinates prevPos = lib->GetPrevPossition();
 	if (prevPos.x == 0) return; // initial state was previsou
 	int dx = (int)x - (int)prevPos.x;
 	int dy = (int)y - (int)prevPos.y;

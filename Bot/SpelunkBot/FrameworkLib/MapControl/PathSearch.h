@@ -3,25 +3,25 @@
 class PathSearch;
 
 #include <vector>
+#include <memory>
 #include <math.h>
 #include <functional>
 #include <queue>
 
-
-#include "MapControl.h"
-#include "FrameworkLibrary.h"
-#include "IBotAPI.h"
 #include "SearchAlgorithmInterfaces.h"
+
+#include "ActionFactories.h"
+#include "MapControl.h"
+
+#include "AStarSearch.h"
+#include "Heuristic.h"
 
 using namespace std;
 
 class PathSearch
 {
 public: 
-	PathSearch(MapControl &map) :map(map)
-	{
-		searcher = make_unique<AStar>(map);
-	}
+	PathSearch(MapControl &map);
 	void FindPath(Coordinates start, Coordinates finish);
 	unique_ptr<ActionHandlerFactory> GetNextMilestone();
 private:

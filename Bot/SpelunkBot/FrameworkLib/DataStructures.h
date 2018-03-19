@@ -3,6 +3,9 @@
 #include <functional>
 #include <vector>
 #include <iostream>
+#include <memory>
+
+class FrameworkLibrary;
 
 using namespace std;
 
@@ -28,12 +31,6 @@ public:
 	Command(int id, function<void()> func) :identifier(id), callback(func) {}
 	int identifier;
 	function<void()> callback;
-};
-
-class ActionHandlerFactory
-{
-public:
-	virtual unique_ptr<ActionHandler> GetAction(FrameworkLibrary* lib) = 0;
 };
 
 class ActionHandler
@@ -78,6 +75,93 @@ protected:
 			return false;
 		return true;
 	}
+	bool CanBeStopped() { return GetState() == ActionState::runnig; }
 	unique_ptr<function<void()>> parentCallback;
 	ActionState state=ActionState::waiting;
+};
+
+class ActionHandlerFactory
+{
+public:
+	ActionHandlerFactory(double finalX, double finalY) :finalCoords(finalX, finalY) {}
+	virtual unique_ptr<ActionHandler> GetAction(FrameworkLibrary* lib) = 0;
+	string GetActionDescrition() { return actionDescription; }
+	Coordinates GetFinalCoords() { return finalCoords; }
+protected:
+	string actionDescription;
+	Coordinates finalCoords;
+};
+
+struct AdditionalInfo
+{
+	int lifeCount = 1;
+	int ropeCount = 0;
+	int bombCount = 0;
+};
+
+struct SearchCoords
+{
+	int x = 0;
+	int y = 0;
+
+	SearchCoords* previousState = nullptr;
+	unique_ptr<ActionHandlerFactory> action;
+
+	int completePrice = 0;
+	int currentDistance = INT32_MAX;
+
+	AdditionalInfo spelunkerState;
+
+	void SetCoords(int x, int y) { this->x = x; this->y = y; }
+
+	void Visit(SearchCoords* prevState, int actionCount, unique_ptr<ActionHandlerFactory> action, AdditionalInfo state)
+	{
+		if (actionCount >= currentDistance) return;
+		previousState = prevState;
+		currentDistance = actionCount;
+		this->action = move(action);
+		spelunkerState = state;
+	}
+
+	bool IsEqualCoords(const SearchCoords& a) const
+	{
+		if (a.x == x && a.y == y) return true;
+		return false;
+	}
+	bool IsEqualCoords(const SearchCoords* const a) const
+	{
+		if (a->x == x && a->y == y) return true;
+		return false;
+	}
+
+	bool operator<(const SearchCoords& a) const
+	{
+		if (a.completePrice > completePrice) return true;
+		return false;
+	}
+	bool operator<(const SearchCoords* const a) const
+	{
+		if (a->completePrice > completePrice) return true;
+		return false;
+	}
+	bool operator>(const SearchCoords& a) const
+	{
+		if (a.completePrice < completePrice) return true;
+		return false;
+	}
+	bool operator>(const SearchCoords* const a) const
+	{
+		if (a->completePrice < completePrice) return true;
+		return false;
+	}
+	bool operator==(const SearchCoords& a) const
+	{
+		if (a.completePrice == completePrice) return true;
+		return false;
+	}
+	bool operator==(const SearchCoords* const a) const
+	{
+		if (a->completePrice == completePrice) return true;
+		return false;
+	}
 };

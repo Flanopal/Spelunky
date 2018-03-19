@@ -5,7 +5,7 @@
 class DistanceHeuristic : public IHeuristic
 {
 public:
-	DistanceHeuristic(SearchCoords& const finish) :IHeuristic(finish) {}
-	virtual int GetStatePrice(SearchCoords& state);
+	DistanceHeuristic(const SearchCoords* finish) :IHeuristic(finish) {}
+	virtual int GetStatePrice(SearchCoords* state);
 	virtual ~DistanceHeuristic() {}
 };

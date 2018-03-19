@@ -5,12 +5,23 @@ void MyBot::Update()
 {
 	int k = 0;
 	lib->Update(&k);
+	if (!switched && action->GetState() == ActionState::finished)
+	{
+		Coordinates coords = GetPlayerCoordinates();
+		lib->pathSearch->FindPath(coords, Coordinates(coords.x + 5, coords.y));
+		switched = true;
+		action = lib->pathSearch->GetNextMilestone()->GetAction(&*lib);
+		action->Start();
+	}
+	/*int k = 0;
+	lib->Update(&k);
 	if (action->GetState() == ActionState::finished && count == -1)
 	{
 		lib->mapControl->CoutFrame();
 		lib->mapControl->CoutMap();
 		count++;
-	}
+	}*/
+
 	/*if (count > -1)
 	{
 		if (count > 0)

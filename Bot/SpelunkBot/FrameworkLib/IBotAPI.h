@@ -1,5 +1,6 @@
 #pragma once
 #include "IBot.h"
+#include "DataStructures.h"
 
 class IBotAPI :public IBot
 {
@@ -12,4 +13,6 @@ public:
 
 	virtual void SetDuck(bool value);
 	virtual void SetLookUp(bool value);
+
+	virtual Coordinates GetPlayerCoordinates();
 };

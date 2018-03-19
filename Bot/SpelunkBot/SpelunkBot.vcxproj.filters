@@ -245,14 +245,14 @@
     <ClCompile Include="FrameworkLib\MapControl\SearchActions.cpp">
       <Filter>Source Files\BotFramework\MemberClasses\SpaceControl</Filter>
     </ClCompile>
-    <ClCompile Include="FrameworkLib\MapControl\ActionFactories.cpp">
-      <Filter>Source Files\BotFramework\MemberClasses\SpaceControl</Filter>
-    </ClCompile>
     <ClCompile Include="FrameworkLib\MapControl\SearchAlgorithm\Heuristic.cpp">
       <Filter>Source Files\BotFramework\MemberClasses\SpaceControl\SearchAlgorithm</Filter>
     </ClCompile>
     <ClCompile Include="FrameworkLib\MapControl\SearchAlgorithm\AStarSearch.cpp">
       <Filter>Source Files\BotFramework\MemberClasses\SpaceControl\SearchAlgorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameworkLib\MapControl\ActionFactories.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\SpaceControl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

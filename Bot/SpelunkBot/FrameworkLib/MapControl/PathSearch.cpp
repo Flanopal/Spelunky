@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "PathSearch.h"
 
+PathSearch::PathSearch(MapControl &map) :map(map)
+{
+	searcher = make_unique<AStar>(map);
+}
+
 void PathSearch::FindPath(Coordinates start, Coordinates finish)
 {
 	path = searcher->FindPath(start, finish);

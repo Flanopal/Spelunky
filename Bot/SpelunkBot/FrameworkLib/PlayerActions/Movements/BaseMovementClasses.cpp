@@ -5,6 +5,7 @@ bool BaseMVClasses::MoveFor::Start()
 {
 	if (dist <= 0) return false;
 	cout << "Starting moving\n";
+	state = ActionState::runnig;
 	if (left)
 		return wrapper->StartMovingLeft(make_unique<function<void()>>(bind(&MoveFor::MyCallback, this)));
 	else
@@ -13,6 +14,7 @@ bool BaseMVClasses::MoveFor::Start()
 
 void BaseMVClasses::MoveFor::Stop()
 {
+	if (!CanBeStopped()) return;
 	wrapper->StopHorizontalMoving();
 	state = ActionState::terminated;
 }
@@ -21,10 +23,7 @@ void BaseMVClasses::MoveFor::MyCallback()
 {
 	if (dist <= 1)
 	{
-		if (dist == 1)
-		{
-			Finish();
-		}
+		Finish();
 	}
 	--dist;
 	callParentCallback();
@@ -57,6 +56,7 @@ bool BaseMVClasses::SideMoveAt::Start()
 
 void BaseMVClasses::SideMoveAt::Stop()
 {	
+	if (!CanBeStopped()) return;
 	wrapper->StopHorizontalMoving();
 	state=ActionState::terminated;
 }
@@ -91,6 +91,7 @@ bool BaseMVClasses::JumpToSpot::Start()
 	horizontalMove->registrCallback(make_unique<function<void()>>(bind(&JumpToSpot::MyCallback, this)));
 	if (!horizontalMove->Start()) return false;
 	lib->playerActions->movements->Jump();
+	return true;
 }
 
 void BaseMVClasses::JumpToSpot::Stop()
@@ -143,9 +144,11 @@ void BaseMVClasses::ClimbToNodeLevel::MyCallback()
 		dif = -1;
 	if (!lib->mapControl->NodeIsClimable(targetX, Y+dif))
 		Stop();
+	callParentCallback();
 }
 void BaseMVClasses::ClimbToNodeLevel::Stop()
 {
+	if (!CanBeStopped()) return;
 	cout << "Stop climbing\n";
 	wrapper->StopVerticalMoving();
 	state = ActionState::terminated;
@@ -171,6 +174,7 @@ bool BaseMVClasses::LeaveClimbing::Start()
 
 void BaseMVClasses::LeaveClimbing::Stop()
 {
+	if (!CanBeStopped()) return;
 	horizontalMove->Stop();
 	wrapper->RemoveUpdateCallback();
 	state = ActionState::terminated;
@@ -186,6 +190,27 @@ void BaseMVClasses::LeaveClimbing::MyCallback()
 		}
 	callParentCallback();
 }
-
+ 
+bool BaseMVClasses::ClimbToNodeLevelAndEscapeLadder::Start()
+{
+	return climb->Start();
+}
+void BaseMVClasses::ClimbToNodeLevelAndEscapeLadder::Stop()
+{
+	if (climb->GetState() == ActionState::runnig) climb->Stop();
+	else escape->Stop();
+}
+ActionState BaseMVClasses::ClimbToNodeLevelAndEscapeLadder::GetState()
+{
+	ActionState state = climb->GetState();
+	if (state == ActionState::finished) state = escape->GetState();
+	return state;
+}
+void BaseMVClasses::ClimbToNodeLevelAndEscapeLadder::MyCallback()
+{
+	if (climb->GetState() == ActionState::finished && escape->GetState() == ActionState::waiting)
+		escape->Start();
+	callParentCallback();
+}
 
 
