@@ -2,18 +2,24 @@
 #include "MovementExecutingWrapper.h"
 
 void MovementExecutingWrapper::Update()
-{
+{	
+	if (IsWaiting()) return;
 	executor->Update();
 	if (executor->IsJumping())
 	{
 		if (jumpLength == 0)
+		{
 			executor->JumpStop();
+		}
 		else
+		{
 			--jumpLength;
+		}
 	}
-	MoveCallback();
+	CallMoveCallback();
+	CallUpdateCallback();
 }
-bool MovementExecutingWrapper::StartMovingRight(unique_ptr<function<void()>> callback)
+bool MovementExecutingWrapper::StartMovingRight(WrapperCallback callback)
 {
 	if (horizontalMovingCallback != nullptr) return false;
 	cout << "Right move start\n";
@@ -21,7 +27,7 @@ bool MovementExecutingWrapper::StartMovingRight(unique_ptr<function<void()>> cal
 	executor->MoveRightStart();
 	return true;
 }
-bool MovementExecutingWrapper::StartMovingLeft(unique_ptr<function<void()>> callback)
+bool MovementExecutingWrapper::StartMovingLeft(WrapperCallback callback)
 {
 	if (horizontalMovingCallback != nullptr) return false;
 	cout << "Left move start\n";
@@ -29,7 +35,7 @@ bool MovementExecutingWrapper::StartMovingLeft(unique_ptr<function<void()>> call
 	executor->MoveLeftStart();
 	return true;
 }
-bool MovementExecutingWrapper::StartLookingUp(unique_ptr<function<void()>> callback)
+bool MovementExecutingWrapper::StartLookingUp(WrapperCallback callback)
 {
 	if (verticalMovingCallback != nullptr) return false;
 	cout << "Looking up start\n";
@@ -37,7 +43,7 @@ bool MovementExecutingWrapper::StartLookingUp(unique_ptr<function<void()>> callb
 	executor->LookUpStart();
 	return true;
 }
-bool MovementExecutingWrapper::StartCrouching(unique_ptr<function<void()>> callback)
+bool MovementExecutingWrapper::StartCrouching(WrapperCallback callback)
 {
 	if (verticalMovingCallback != nullptr) return false;
 	cout << "Crouch start\n";
@@ -55,6 +61,7 @@ void MovementExecutingWrapper::StopHorizontalMoving()
 	{
 			executor->MoveLeftStop();
 	}
+	if (horizontalMovingCallback != nullptr) (*horizontalMovingCallback)(true);
 	horizontalMovingCallback = nullptr;
 	cout << "Horizontal movement stopped\n";
 }
@@ -68,11 +75,12 @@ void MovementExecutingWrapper::StopVerticalMoving()
 	{
 		executor->CrouchStop();
 	}
+	if (verticalMovingCallback != nullptr) (*verticalMovingCallback)(true);
 	verticalMovingCallback = nullptr;
 	cout << "Vertical movement stopped\n";
 }
 
-bool MovementExecutingWrapper::RegisterUpdateCallback(unique_ptr<function<void()>> callback)
+bool MovementExecutingWrapper::RegisterUpdateCallback(WrapperCallback callback)
 {
 	if (updateCallback != nullptr) return false;
 	else updateCallback = move(callback);
@@ -80,22 +88,52 @@ bool MovementExecutingWrapper::RegisterUpdateCallback(unique_ptr<function<void()
 }
 void MovementExecutingWrapper::RemoveUpdateCallback()
 {
+	if (updateCallback != nullptr) (*updateCallback)(true);
 	updateCallback = nullptr;
 }
-
+bool MovementExecutingWrapper::SetWaiting(int time, WrapperCallback callback)
+{
+	if (waitCallback != nullptr) return false;
+	waitCallback = move(callback);
+	waitTime = time;
+	return true;
+}
+void MovementExecutingWrapper::StopWaiting()
+{
+	waitTime = 0;
+	if (waitCallback != nullptr) (*waitCallback)(true);
+	waitCallback = nullptr;
+}
 void MovementExecutingWrapper::Jump(int ticks)
 {
-	cout << "Jump\n";
 	jumpLength = ticks;
 	executor->JumpStart();
 }
 
-void MovementExecutingWrapper::MoveCallback()
+void MovementExecutingWrapper::CallMoveCallback()
 {
 	if (horizontalMovingCallback != nullptr)
-		(*horizontalMovingCallback)();
+		(*horizontalMovingCallback)(false);
 	if (verticalMovingCallback != nullptr)
-		(*verticalMovingCallback)();
+		(*verticalMovingCallback)(false);
+	
+}
+void MovementExecutingWrapper::CallUpdateCallback()
+{
 	if (updateCallback != nullptr)
-		(*updateCallback)();
+		(*updateCallback)(false);
+	if (waitCallback != nullptr)
+		(*waitCallback)(false);
+}
+
+bool MovementExecutingWrapper::IsWaiting()
+{
+	if (waitTime > 0)
+	{
+		--waitTime;
+		CallUpdateCallback();
+		if (waitTime == 0) waitCallback = nullptr;
+		return true;
+	}
+	return false;
 }

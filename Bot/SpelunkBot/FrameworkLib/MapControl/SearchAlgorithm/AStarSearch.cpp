@@ -10,11 +10,16 @@ vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(Coordinates start, Coor
 	SearchCoords* myPos = &buffer[(int)start.x] [(int)start.y];
 	myPos->SetCoords((int)start.x, (int)start.y);
 
+	if (myPos->IsEqualCoords(target))
+	{
+		target->action = make_unique<MoveToActionFactory>(target->x + 0.5, target->y);
+		return CompletePath(buffer, target);
+	}
+
 	heuristic = make_unique<DistanceHeuristic>(target); // heuristic function for h* evaluating
 	priority_queue<SearchCoords*, std::vector<SearchCoords*>, std::greater<SearchCoords*>> frontier; // holds Search possitions ordered by price
 
 	int targetDistance = heuristic->GetStatePrice(myPos);
-	cout << "initial price = " << targetDistance << endl;
 	myPos->completePrice = targetDistance;
 	myPos->currentDistance = 0;
 
@@ -41,7 +46,6 @@ vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(Coordinates start, Coor
 		{
 			frontier.push(nextStates[i]);
 		}
-		cout << "pushed \n";
 		nextStates.clear();
 	} while (frontier.size() > 0);
 
@@ -55,8 +59,8 @@ vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(Coordinates start, Coor
 
 vector<SearchCoords*> AStar::GetNextStates(SearchCoords* state, SearchCoords(&buffer)[42][34])
 {
-	vector<SearchCoords*> ret = SearchActions::SideMove::GetNextNodes(map, state, buffer);
-	//vector<SearchCoords*> help = SearchActions::Jump::GetNextNodes(map, state, buffer);
+	//vector<SearchCoords*> ret = SearchActions::SideMove(map,buffer).GetNextNodes(state);
+	vector<SearchCoords*> help = SearchActions::Jump(map, buffer).GetNextNodes(state);
 	//ret.insert(ret.end(), help.begin(), help.end()); // append states obtained by jumping
 	//help=SearchActions::ClimbLadder::GetNextNodes(map, state, buffer);
 	//ret.insert(ret.end(), help.begin(), help.end()); // append states obtained by climbing a ladder
@@ -65,7 +69,7 @@ vector<SearchCoords*> AStar::GetNextStates(SearchCoords* state, SearchCoords(&bu
 	//	help = SearchActions::ClimbRope::GetNextNodes(map, state, buffer);
 	//	ret.insert(ret.end(), help.begin(), help.end());
 	//}
-	return ret;
+	return help;
 }
 
 
@@ -93,17 +97,35 @@ vector<unique_ptr<ActionHandlerFactory>> AStar::CompletePath(SearchCoords(&buffe
 
 void AStar::ShowBuffer(SearchCoords(&buffer)[42][34])
 {
-	for (int j = 0; j < 3; ++j)
+	cout << "..";
+	for (int i = 0; i < 20; ++i)
 	{
 		cout << "|";
-		for (int i = 0; i < 42; ++i)
+		cout << "..";
+		if (i < 10) cout << ".";
+		cout << i;
+		cout << "...";
+	}
+	cout << endl;
+	for (int j = 0; j < 15; ++j)
+	{
+		if (j < 10) cout << ".";
+		cout << j;
+		cout << "|";
+		for (int i = 0; i < 20; ++i)
 		{
 			if (buffer[i][j].action == nullptr) cout << "......."; //no action
 			else
 			{
 				SearchCoords* node = &buffer[i][j];
 				std::cout << node->action->GetActionDescrition();
-				std::cout << node->previousState->x << "," << node->previousState->y;
+				int x = node->previousState->x;
+				int y = node->previousState->y;
+				if (x < 10) cout << ".";
+				std::cout << x;
+				std::cout << ",";
+				if (y < 10) cout << ".";
+				std::cout << y;
 			}
 			cout << "|";
 		}

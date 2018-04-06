@@ -12,6 +12,8 @@ using namespace std;
 enum class ActionState { waiting, runnig, finished, terminated };
 enum class LeaveDirection { stay = 0, right, left };
 
+typedef unique_ptr<function<void(bool)>> WrapperCallback;
+
 struct Coordinates
 {
 public:
@@ -22,6 +24,19 @@ public:
 	{
 		if (target.x == x && target.y == y) return true;
 		return false;
+	}
+	bool EqualCoordinates(const Coordinates& target)
+	{
+		if (EqualValues(target.x, x) && EqualValues(target.y, y)) return true;
+		return false;
+	}
+private:
+	bool EqualValues(double val1, double val2)
+	{
+		double dif = val1 - val2;
+		if (dif > 0.2 || dif < -0.2)
+			return false;
+		return true;
 	}
 };
 
@@ -52,14 +67,14 @@ public:
 	virtual void Stop()
 	{
 	}
-	virtual void registrCallback(unique_ptr<function<void()>> callback)
+	virtual void registrCallback(WrapperCallback callback)
 	{
 		this->parentCallback = move(callback);
 	}
-	virtual void callParentCallback()
+	virtual void callParentCallback(bool stopped)
 	{
 		if (parentCallback != nullptr)
-			(*parentCallback)();
+			(*parentCallback)(stopped);
 	}
 	virtual ~ActionHandler() {}	
 protected:
@@ -67,6 +82,15 @@ protected:
 	{
 		Stop();
 		state = ActionState::finished;
+	}
+	virtual bool StopControl(bool stopped)
+	{
+		if (stopped)
+		{
+			state = ActionState::terminated;
+			return true;
+		}
+		return false;
 	}
 	bool EqualValues(double val1, double val2)
 	{
@@ -76,7 +100,7 @@ protected:
 		return true;
 	}
 	bool CanBeStopped() { return GetState() == ActionState::runnig; }
-	unique_ptr<function<void()>> parentCallback;
+	WrapperCallback parentCallback;
 	ActionState state=ActionState::waiting;
 };
 
@@ -84,8 +108,9 @@ class ActionHandlerFactory
 {
 public:
 	ActionHandlerFactory(double finalX, double finalY) :finalCoords(finalX, finalY) {}
+	ActionHandlerFactory(Coordinates finalCoords) :finalCoords(finalCoords) {}
 	virtual unique_ptr<ActionHandler> GetAction(FrameworkLibrary* lib) = 0;
-	string GetActionDescrition() { return actionDescription; }
+	virtual string GetActionDescrition() { return actionDescription; }
 	Coordinates GetFinalCoords() { return finalCoords; }
 protected:
 	string actionDescription;
@@ -116,9 +141,9 @@ struct SearchCoords
 
 	void Visit(SearchCoords* prevState, int actionCount, unique_ptr<ActionHandlerFactory> action, AdditionalInfo state)
 	{
-		if (actionCount >= currentDistance) return;
 		previousState = prevState;
 		currentDistance = actionCount;
+		completePrice = 0;
 		this->action = move(action);
 		spelunkerState = state;
 	}

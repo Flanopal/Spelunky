@@ -123,7 +123,10 @@ void MovementExecuting::RemoveCallback(Identifier id)
 	for (size_t i = 0; i < size; ++i)
 	{
 		if (actions[i]->identifier == (int)id)
+		{
 			actions.erase(actions.begin() + i); // remove action from vector
+			break;
+		}
 	}
 }
 

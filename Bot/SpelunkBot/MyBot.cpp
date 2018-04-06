@@ -3,16 +3,39 @@
 
 void MyBot::Update()
 {
-	int k = 0;
-	lib->Update(&k);
+	lib->Update();
+
+	Coordinates exit = lib->mapControl->GetExitPos();
+	Coordinates coords = GetPlayerCoordinates();
 	if (!switched && action->GetState() == ActionState::finished)
-	{
-		Coordinates coords = GetPlayerCoordinates();
-		lib->pathSearch->FindPath(coords, Coordinates(coords.x + 5, coords.y));
+	{	
 		switched = true;
+		lib->pathSearch->FindPath(coords, exit);
 		action = lib->pathSearch->GetNextMilestone()->GetAction(&*lib);
 		action->Start();
 	}
+	else
+		if (action->GetState() == ActionState::finished)
+		{
+			if (cd > 3)
+			{
+				unique_ptr<ActionHandlerFactory> fact = lib->pathSearch->GetNextMilestone();
+				if (fact != nullptr)
+				{
+					action = fact->GetAction(&*lib);
+					action->Start();
+				}
+				else
+				{
+					if (!(exit.EqualCoordinates(coords))) switched = false;
+				}
+				cd = 0;
+			}
+			else
+				++cd;
+		}
+
+
 	/*int k = 0;
 	lib->Update(&k);
 	if (action->GetState() == ActionState::finished && count == -1)

@@ -23,10 +23,14 @@ public:
 	unique_ptr<ActionHandler> MoveLeftFor(int distance);
 	unique_ptr<ActionHandler> MoveRightFor(int distance);
 	unique_ptr<ActionHandler> SideMoveAt(double coordX);
+	unique_ptr<ActionHandler> LongJump();
+	unique_ptr<ActionHandler> ShortJump();
 	unique_ptr<ActionHandler> JumpTo(Coordinates coords);
 	unique_ptr<ActionHandler> ClimbToLevel(double lvl);
 	unique_ptr<ActionHandler> LeaveClimable(LeaveDirection direction);
-	void Jump();
+	unique_ptr<ActionHandler> Wait(int time);
+	unique_ptr<BaseMVClasses::ActionList> GetActionList();
+	void Jump(int ticks);
 private:
 	unique_ptr<MovementExecutingWrapper> movementWrapper;
 	FrameworkLibrary* lib;

@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include <memory>
+
 using namespace std;
 
 class BaseMVClasses
@@ -8,10 +9,12 @@ class BaseMVClasses
 public:
 	class MoveFor;
 	class SideMoveAt;
+	class Jump;
 	class JumpToSpot;
 	class ClimbToNodeLevel;
 	class LeaveClimbing;
-	class ClimbToNodeLevelAndEscapeLadder;
+	class Wait;
+	class ActionList;
 };
 
 #include "MovementExecutingWrapper.h"
@@ -28,7 +31,7 @@ public:
 	virtual void Stop();
 	virtual ~MoveFor() {}
 private:
-	void MyCallback();
+	void MyCallback(bool stopped);
 	int dist;
 	bool left;
 	MovementExecutingWrapper* wrapper;
@@ -45,13 +48,24 @@ public:
 	virtual void Stop();
 	virtual ~SideMoveAt() {}
 private:
-	void MyCallback();
+	void MyCallback(bool stopped);
 	bool left;
 	double coordX;
 	unique_ptr<MovingController> controler;
 	FrameworkLibrary* lib;
 	MovementExecutingWrapper* wrapper;
 	IBotAPI* bot;
+};
+
+class BaseMVClasses::Jump :public ActionHandler
+{
+public:
+	Jump(FrameworkLibrary* lib,int ticks) :lib(lib),ticks(ticks) {}
+	virtual bool Start();
+	virtual ~Jump() {}
+private:
+	FrameworkLibrary* lib;
+	int ticks;
 };
 
 class BaseMVClasses::JumpToSpot :public ActionHandler
@@ -64,7 +78,8 @@ public:
 	virtual ActionState GetState();
 	virtual ~JumpToSpot() {}
 private:
-	void MyCallback();
+	void MyCallback(bool stopped);
+	int dx;
 	Coordinates target;
 	unique_ptr<ActionHandler> horizontalMove;
 	FrameworkLibrary* lib;
@@ -81,7 +96,7 @@ public:
 	virtual void Stop();
 	virtual ~ClimbToNodeLevel() {}
 private:
-	void MyCallback();
+	void MyCallback(bool stopped);
 	double targetLvl;
 	double targetX;
 	bool up;
@@ -102,7 +117,7 @@ public:
 	virtual void Stop();
 	virtual ~LeaveClimbing() {}
 private:
-	void MyCallback();
+	void MyCallback(bool stopped);
 	LeaveDirection dir;
 	unique_ptr<MovingController> controler;
 	unique_ptr<ActionHandler> horizontalMove;
@@ -111,22 +126,31 @@ private:
 	MovementExecutingWrapper* wrapper;
 };
 
-class BaseMVClasses::ClimbToNodeLevelAndEscapeLadder :public ActionHandler
+class BaseMVClasses::Wait :public ActionHandler
 {
 public:
-	ClimbToNodeLevelAndEscapeLadder(FrameworkLibrary* lib, IBotAPI* bot, MovementExecutingWrapper* wrapper, double targetLvl)
-	{
-		climb = make_unique<ClimbToNodeLevel>(lib, bot, wrapper, targetLvl);
-		climb->registrCallback(make_unique<function<void()>>(bind(&ClimbToNodeLevelAndEscapeLadder::MyCallback, this)));
-		escape = make_unique<LeaveClimbing>(lib, bot, wrapper, LeaveDirection::stay);
-		escape->registrCallback(make_unique<function<void()>>(bind(&ClimbToNodeLevelAndEscapeLadder::MyCallback, this)));
-	}
+	Wait(MovementExecutingWrapper* wrapper, int time):wrapper(wrapper), waitTime(time) {}
+	virtual bool Start();
+	virtual void Stop();
+private:
+	void MyCallback(bool stopped);
+	int waitTime;
+	MovementExecutingWrapper* wrapper;
+};
+
+class BaseMVClasses::ActionList :public ActionHandler
+{
+public:
+	ActionList(FrameworkLibrary* lib):lib(lib) {}
+	void AddAction(unique_ptr<ActionHandler> action);
+	void AddAction(unique_ptr<ActionHandlerFactory> action);
 	virtual bool Start();
 	virtual void Stop();
 	virtual ActionState GetState();
-	virtual ~ClimbToNodeLevelAndEscapeLadder() {}
+	virtual ~ActionList() {}
 private:
-	void MyCallback();
-	unique_ptr<ActionHandler> climb;
-	unique_ptr<ActionHandler> escape;
+	void MyCallback(bool stopped);
+	size_t index = -1;
+	vector<unique_ptr<ActionHandler>> actions;
+	FrameworkLibrary* lib;
 };

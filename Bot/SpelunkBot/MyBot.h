@@ -29,6 +29,7 @@ public:
 	~MyBot() { }
 private:
 	bool switched = false;
+	int cd = 0;
 	unique_ptr<FrameworkLibrary> lib;
 	unique_ptr<ActionHandler> action;
 };

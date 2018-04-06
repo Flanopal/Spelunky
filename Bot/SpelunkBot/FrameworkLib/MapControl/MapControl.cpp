@@ -102,8 +102,8 @@ void MapControl::UpdateCaveMap()
 {
 	double x = bot->GetPlayerPositionXNode();
 	double y = bot->GetPlayerPositionYNode();
-	//Coordinates prevPos = lib->GetPrevPossition();
-	if (prevPos.x == 0) return; // initial state was previsou
+	Coordinates prevPos = lib->GetPrevPossition();
+	if (prevPos.x == 0) return; // initial state was previous
 	int dx = (int)x - (int)prevPos.x;
 	int dy = (int)y - (int)prevPos.y;
 	int lineX;

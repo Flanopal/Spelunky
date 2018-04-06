@@ -20,22 +20,29 @@ public:
 	}
 	void Update();
 
-	bool StartMovingRight(unique_ptr<function<void()>> callback);
-	bool StartMovingLeft(unique_ptr<function<void()>> callback);
-	bool StartLookingUp(unique_ptr<function<void()>> callback);
-	bool StartCrouching(unique_ptr<function<void()>> callback);
+	bool StartMovingRight(WrapperCallback callback);
+	bool StartMovingLeft(WrapperCallback callback);
+	bool StartLookingUp(WrapperCallback callback);
+	bool StartCrouching(WrapperCallback callback);
 	void StopHorizontalMoving();
 	void StopVerticalMoving();
 	
-	bool RegisterUpdateCallback(unique_ptr<function<void()>> callback);
+	bool RegisterUpdateCallback(WrapperCallback callback);
 	void RemoveUpdateCallback();
+	bool SetWaiting(int time, WrapperCallback callback);
+	void StopWaiting();
 	void Jump(int ticks);
 private:
-	void MoveCallback();
-	int jumpLength = 0;
+	void CallMoveCallback();
+	void CallUpdateCallback();
+	bool IsWaiting();
 
-	unique_ptr<function<void()>> horizontalMovingCallback;
-	unique_ptr<function<void()>> verticalMovingCallback;
-	unique_ptr<function<void()>> updateCallback;
+	int jumpLength = 0;
+	int waitTime = 0;
+
+	WrapperCallback horizontalMovingCallback;
+	WrapperCallback verticalMovingCallback;
+	WrapperCallback updateCallback;
+	WrapperCallback waitCallback;
 	unique_ptr<MovementExecuting> executor;
 };

@@ -19,7 +19,7 @@ class FrameworkLibrary
 {
 public:
 	FrameworkLibrary(IBotAPI* bot);
-	bool Update(int* error);
+	bool Update();
 	//unique_ptr<EnemyControl> enemyControl;
 	unique_ptr<MapControl> mapControl;
 	unique_ptr<PathSearch> pathSearch;
@@ -40,7 +40,7 @@ public:
 	MovingController(FrameworkLibrary* lib, IBotAPI* bot, int limit) :lib(lib), bot(bot), samePlaceTimeLimit(limit) {}
 	bool Update()
 	{
-		Coordinates curPos(bot->GetPlayerPositionXNode(), bot->GetPlayerPositionYNode());
+		Coordinates curPos = bot->GetPlayerCoordinates();
 		if (curPos == lib->GetPrevPossition())
 		{
 			++samePlaceTime;

@@ -1,37 +1,54 @@
 #include "stdafx.h"
 #include "BaseMovementClasses.h"
 
+
+// ------ MOVE FOR ------
 bool BaseMVClasses::MoveFor::Start()
 {
+	bool started;
 	if (dist <= 0) return false;
-	cout << "Starting moving\n";
-	state = ActionState::runnig;
 	if (left)
-		return wrapper->StartMovingLeft(make_unique<function<void()>>(bind(&MoveFor::MyCallback, this)));
+		started = wrapper->StartMovingLeft(make_unique<function<void(bool)>>(bind(&MoveFor::MyCallback, this, placeholders::_1)));
 	else
-		return wrapper->StartMovingRight(make_unique<function<void()>>(bind(&MoveFor::MyCallback, this)));
+		started = wrapper->StartMovingRight(make_unique<function<void(bool)>>(bind(&MoveFor::MyCallback, this, placeholders::_1)));
+		
+	if (started)
+	{
+		state = ActionState::runnig;
+		cout << "Starting moving\n";
+		return true;
+	}
+	else
+	{
+		state = ActionState::terminated;
+		cout << "Moving start failed\n";
+		return false;
+	}
 }
 
 void BaseMVClasses::MoveFor::Stop()
 {
 	if (!CanBeStopped()) return;
 	wrapper->StopHorizontalMoving();
-	state = ActionState::terminated;
 }
 
-void BaseMVClasses::MoveFor::MyCallback()
+void BaseMVClasses::MoveFor::MyCallback(bool stopped)
 {
-	if (dist <= 1)
+	if (!StopControl(stopped))
 	{
-		Finish();
+		if (dist <= 1)
+		{
+			Finish();
+		}
+		--dist;
 	}
-	--dist;
-	callParentCallback();
+	callParentCallback(stopped);
 }
 
+
+// ------ SIDE MOVE AT ------
 bool BaseMVClasses::SideMoveAt::Start()
 {
-	cout << "Gonna get to position " << coordX << '\n';
 	double positionX = bot->GetPlayerPositionXNode();
 	if (EqualValues(positionX, coordX))
 	{
@@ -41,57 +58,91 @@ bool BaseMVClasses::SideMoveAt::Start()
 	if (positionX < coordX)	left = false;
 	else left = true;
 	
-	state = ActionState::runnig;
+	bool started;
 	if (left)
 	{
 		coordX += 0.2;
-		return wrapper->StartMovingLeft(make_unique<function<void()>>(bind(&SideMoveAt::MyCallback, this)));
+		started = wrapper->StartMovingLeft(make_unique<function<void(bool)>>(bind(&SideMoveAt::MyCallback, this, placeholders::_1)));
 	}
 	else
 	{
 		coordX -= 0.2;
-		return wrapper->StartMovingRight(make_unique<function<void()>>(bind(&SideMoveAt::MyCallback, this)));
+		started = wrapper->StartMovingRight(make_unique<function<void(bool)>>(bind(&SideMoveAt::MyCallback, this, placeholders::_1)));
+	}
+
+	if (started)
+	{
+		state = ActionState::runnig;
+		cout << "Gonna get to position " << coordX << '\n';
+		return true;
+	}
+	else
+	{
+		state = ActionState::terminated;
+		return false;
 	}
 }
-
 void BaseMVClasses::SideMoveAt::Stop()
 {	
 	if (!CanBeStopped()) return;
 	wrapper->StopHorizontalMoving();
-	state=ActionState::terminated;
 }
-
-void BaseMVClasses::SideMoveAt::MyCallback()
+void BaseMVClasses::SideMoveAt::MyCallback(bool stopped)
 {
-	Coordinates curPos(bot->GetPlayerPositionXNode(), bot->GetPlayerPositionYNode());
-	if (EqualValues(curPos.x, coordX))
+	if (!StopControl(stopped))
 	{
-		cout << "Here we are at " << coordX << '\n';
-		Finish();
+		Coordinates curPos = bot->GetPlayerCoordinates();
+		if (EqualValues(curPos.x, coordX))
+		{
+			cout << "Here we are at " << coordX << '\n';
+			Finish();
+		}
+		else
+		{
+			if (!controler->Update())
+			{
+				Stop();
+			}
+		}
 	}
-	else
-	{
-		if (!controler->Update())
-			Stop();
-	}
-	callParentCallback();
+	callParentCallback(stopped);
 }
 
+
+// ------ JUMP ------
+bool BaseMVClasses::Jump::Start()
+{
+	cout << "Jump started\n";
+	state = ActionState::finished;
+	lib->playerActions->movements->Jump(ticks);
+	return true;
+}
+
+// ------ JUMP TO SPOT ------
 bool BaseMVClasses::JumpToSpot::Start()
 {
 	double playerX = bot->GetPlayerPositionXNode();
 	double playerY = bot->GetPlayerPositionYNode();
-	double dx = playerX - target.x;
+	if (playerX - target.x < 0) dx = 1;
+	else dx = -1;
 	double dy = playerY - target.y;
-	if (dy > 2) return false;
-	if (!lib->mapControl->NodeIsTerrain(playerX, playerY + 1)) return false;
+	if (dy > 2.5) return false;
+	//if (!lib->mapControl->NodeIsTerrain(playerX, playerY + 1)) return false;
 	// controls done
-	cout << "lets jump\n";
+
 	horizontalMove = lib->playerActions->movements->SideMoveAt(target.x);
-	horizontalMove->registrCallback(make_unique<function<void()>>(bind(&JumpToSpot::MyCallback, this)));
-	if (!horizontalMove->Start()) return false;
-	lib->playerActions->movements->Jump();
-	return true;
+	horizontalMove->registrCallback(make_unique<function<void(bool)>>(bind(&JumpToSpot::MyCallback, this, placeholders::_1)));
+	if (!horizontalMove->Start())
+	{
+		cout << "Cannot jump\n";
+		return false;
+	}
+	else
+	{
+		cout << "lets jump\n";
+		lib->playerActions->movements->Jump(3);
+		return true;
+	}
 }
 
 void BaseMVClasses::JumpToSpot::Stop()
@@ -100,18 +151,24 @@ void BaseMVClasses::JumpToSpot::Stop()
 }
 ActionState BaseMVClasses::JumpToSpot::GetState()
 {
+	if (horizontalMove == nullptr) return ActionState::terminated;
 	return horizontalMove->GetState();
 }
-void BaseMVClasses::JumpToSpot::MyCallback()
+void BaseMVClasses::JumpToSpot::MyCallback(bool stopped)
 {
-	double Y = bot->GetPlayerPositionYNode();
-	double X = bot->GetPlayerPositionXNode();
-	if (!lib->mapControl->NodeIsTerrain(X, Y + 1))
-		if (lib->mapControl->NodeIsTerrain(X + 1, Y))
-			lib->playerActions->movements->Jump();
-	callParentCallback();
+	if (!stopped)
+	{
+		double Y = bot->GetPlayerPositionYNode();
+		double X = bot->GetPlayerPositionXNode();
+		if (!lib->mapControl->NodeIsTerrain(X, Y + 1))
+			if (lib->mapControl->NodeIsTerrain(X + dx, Y))
+				lib->playerActions->movements->Jump(3);
+	}
+	callParentCallback(stopped);
 }
 
+
+// ------ CLIMB TO NODE LEVEL ------
 bool BaseMVClasses::ClimbToNodeLevel::Start()
 {
 	double Y = bot->GetPlayerPositionYNode();
@@ -124,45 +181,68 @@ bool BaseMVClasses::ClimbToNodeLevel::Start()
 	if (Y > targetLvl) up = true;
 	else up = false;
 
-	if (!lib->mapControl->NodeIsClimable(targetX, Y)) return false;
+	if (!lib->mapControl->NodeIsClimable(targetX, Y))
+	{
+		state = ActionState::terminated;
+		return false;
+	}
 
-	state = ActionState::runnig;
+	bool started;
 	//wrapper->Jump(1);
 	if (up)
-		return wrapper->StartLookingUp(make_unique<function<void()>>(bind(&ClimbToNodeLevel::MyCallback, this)));
+		started = wrapper->StartLookingUp(make_unique<function<void(bool)>>(bind(&ClimbToNodeLevel::MyCallback, this, placeholders::_1)));
 	else
-		return wrapper->StartCrouching(make_unique<function<void()>>(bind(&ClimbToNodeLevel::MyCallback, this)));
+		started = wrapper->StartCrouching(make_unique<function<void(bool)>>(bind(&ClimbToNodeLevel::MyCallback, this, placeholders::_1)));
+
+	if (started)
+	{
+		cout << "Climbing\n";
+		state = ActionState::runnig;
+		return true;
+	}
+	else
+	{
+		cout << "Climbing failed\n";
+		state = ActionState::terminated;
+		return false;
+	}
 }
 
-void BaseMVClasses::ClimbToNodeLevel::MyCallback()
+void BaseMVClasses::ClimbToNodeLevel::MyCallback(bool stopped)
 {
-	double Y = bot->GetPlayerPositionYNode();
-	if (EqualValues(Y, targetLvl))
-		Finish();
-	double dif = 1;
-	if (up)
-		dif = -1;
-	if (!lib->mapControl->NodeIsClimable(targetX, Y+dif))
-		Stop();
-	callParentCallback();
+	if (!StopControl(stopped))
+	{
+		double Y = bot->GetPlayerPositionYNode();
+		if (EqualValues(Y, targetLvl))
+			Finish();
+		double dif = 1;
+		if (up)
+			dif = -1;
+		if (!lib->mapControl->NodeIsClimable(targetX, Y + dif))
+			Stop();
+	}
+	callParentCallback(stopped);
 }
 void BaseMVClasses::ClimbToNodeLevel::Stop()
 {
 	if (!CanBeStopped()) return;
 	cout << "Stop climbing\n";
 	wrapper->StopVerticalMoving();
-	state = ActionState::terminated;
 }
 
+
+// ------ LEAVE CLIMBING ------
 bool BaseMVClasses::LeaveClimbing::Start()
 {
 	double coordX = bot->GetPlayerPositionXNode();
+	state = ActionState::terminated; // if control won´t pass, remmains terminated
+
 	if (dir == LeaveDirection::left) coordX -= 0.6;
 	else if (dir == LeaveDirection::right) coordX += 0.6;
 	if (lib->mapControl->NodeIsTerrain(coordX, bot->GetPlayerPositionYNode())) return false;
 	horizontalMove = lib->playerActions->movements->SideMoveAt(coordX);
 	if (!horizontalMove->Start()) return false;
-	if (!wrapper->RegisterUpdateCallback(make_unique<function<void()>>(bind(&LeaveClimbing::MyCallback, this))))
+	if (!wrapper->RegisterUpdateCallback(make_unique<function<void(bool)>>(bind(&LeaveClimbing::MyCallback, this, placeholders::_1))))
 	{
 		horizontalMove->Stop();
 		return false;
@@ -177,40 +257,105 @@ void BaseMVClasses::LeaveClimbing::Stop()
 	if (!CanBeStopped()) return;
 	horizontalMove->Stop();
 	wrapper->RemoveUpdateCallback();
-	state = ActionState::terminated;
-	cout << "Succesfully leaved\n";
 }
 
-void BaseMVClasses::LeaveClimbing::MyCallback()
+void BaseMVClasses::LeaveClimbing::MyCallback(bool stopped)
 {
-	if (state == ActionState::runnig)
-		if (!controler->Update())
-		{
-			Finish();
-		}
-	callParentCallback();
+	if (!StopControl(stopped))
+	{
+		if (state == ActionState::runnig)
+			if (!controler->Update())
+			{
+				Finish();
+			}
+	}
+	callParentCallback(stopped);
 }
  
-bool BaseMVClasses::ClimbToNodeLevelAndEscapeLadder::Start()
+
+// ------ WAIT ------
+bool BaseMVClasses::Wait::Start()
 {
-	return climb->Start();
+	if (wrapper->SetWaiting(waitTime, make_unique<function<void(bool)>>(bind(&Wait::MyCallback, this, placeholders::_1))))
+	{
+		state = ActionState::runnig;
+		return true;
+	}
+	state = ActionState::terminated;
+	return false;
 }
-void BaseMVClasses::ClimbToNodeLevelAndEscapeLadder::Stop()
+void BaseMVClasses::Wait::Stop()
 {
-	if (climb->GetState() == ActionState::runnig) climb->Stop();
-	else escape->Stop();
+	if (!CanBeStopped()) return;
+	wrapper->StopWaiting();
 }
-ActionState BaseMVClasses::ClimbToNodeLevelAndEscapeLadder::GetState()
+void BaseMVClasses::Wait::MyCallback(bool stopped)
 {
-	ActionState state = climb->GetState();
-	if (state == ActionState::finished) state = escape->GetState();
-	return state;
+	if (!StopControl(stopped))
+	{
+		--waitTime;
+		if (waitTime == 0)
+		{
+			state = ActionState::finished;
+		}
+	}
+	callParentCallback(stopped);
 }
-void BaseMVClasses::ClimbToNodeLevelAndEscapeLadder::MyCallback()
+
+
+// ------ ACTION LIST ------
+void BaseMVClasses::ActionList::AddAction(unique_ptr<ActionHandler> action)
 {
-	if (climb->GetState() == ActionState::finished && escape->GetState() == ActionState::waiting)
-		escape->Start();
-	callParentCallback();
+	cout << "Add action\n";
+	if (action == nullptr) return;
+	actions.push_back(move(action));
+	if (index == -1) index = 0;
+}
+void BaseMVClasses::ActionList::AddAction(unique_ptr<ActionHandlerFactory> action)
+{
+	cout << "Add action factory\n";
+	if (action == nullptr) return;
+	AddAction(action->GetAction(lib));
+}
+bool BaseMVClasses::ActionList::Start()
+{
+	cout << "Action list started\n";
+	if (index >= 0 && GetState() == ActionState::waiting)
+	{
+		actions[index]->registrCallback(make_unique<function<void(bool)>>(bind(&ActionList::MyCallback, this, placeholders::_1)));
+		return actions[index]->Start();
+	}
+	return false;
+}
+void BaseMVClasses::ActionList::Stop()
+{
+	actions[index]->Stop();
+}
+ActionState BaseMVClasses::ActionList::GetState()
+{
+	return actions[index]->GetState();
+}
+void BaseMVClasses::ActionList::MyCallback(bool stopped)
+{
+	if (!StopControl(stopped))
+	{
+		if (GetState() == ActionState::finished)
+		{
+			++index;
+			if (index < actions.size())
+			{
+				cout << "next action\n";
+				actions[index]->registrCallback(make_unique<function<void(bool)>>(bind(&ActionList::MyCallback, this, placeholders::_1)));
+				actions[index]->Start();
+			}
+			else
+			{
+				cout << "Last action finished\n";
+				--index;
+			}
+		}
+	}
+	callParentCallback(stopped);
 }
 
 

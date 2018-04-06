@@ -17,39 +17,64 @@ using namespace std;
 
 namespace SearchActions
 {
-	// GetNextNode fill actions into space state and its prices
-	static bool ShouldWriteIntoState(const SearchCoords* const current, const SearchCoords* const target, int lifeLost, int ropeUsed);
-	
-	class BasicAction
-	{
-	public:
-		// not useabble class - used for search testing
-		static vector<SearchCoords*> GetNextNodes(MapControl &map, SearchCoords* coords, SearchCoords(&buffer)[42][34]);
-	};
-
+	enum class FallType { withWaiting = 0, normal = 1, blocked = 2 };
+	typedef unique_ptr<ActionHandlerFactory> GetActionFunction(int x, int y, int prevX, FallType type);
+	static bool ShouldWriteIntoState(const SearchCoords* const current, const SearchCoords* const target, int cost, int lifeLost, int ropeUsed);
+	static int GetCost(int x, int y, const SearchCoords* const prevCoord);
+	// GetNextNode in every class fills actions into space state and their price
 	class SideMove
 	{
 	public:
-		static vector<SearchCoords*> GetNextNodes(MapControl &map, SearchCoords* coords, SearchCoords(&buffer)[42][34]);
+		SideMove(MapControl &map, SearchCoords(&buffer)[42][34]) :map(map), buffer(buffer) {}
+		vector<SearchCoords*> GetNextNodes(SearchCoords* startState);
+		vector<SearchCoords*> Falling(int dx, int& x, int& y, SearchCoords* prevCoords);
+		vector<SearchCoords*> Falling(int dx, int& x, int& y, SearchCoords* startState, GetActionFunction GetAction);
 	private:
-		static vector<SearchCoords*> SideControl(int dx, MapControl &map, SearchCoords* coords, SearchCoords(&buffer)[42][34]);
-		static vector<SearchCoords*> Falling(int dx, int& x, int& y, MapControl &map, SearchCoords* coords, SearchCoords(&buffer)[42][34]);
-		static bool WriteToState(int x, int y, SearchCoords* startState, SearchCoords* prevCoord, SearchCoords(&buffer)[42][34]);
+		vector<SearchCoords*> SideControl(int dx);
+		SearchCoords* HangingCheck(int x, int y, SearchCoords* prevCoord);
+		bool WriteToState(int x, int y, FallType type, SearchCoords* prevCoord);
+		
+		GetActionFunction* CurrentActionGetter;
+
+		static GetActionFunction GetAction;
+		static const int waitTime = 7;
+
+		SearchCoords* startState;
+		MapControl &map;
+		SearchCoords(&buffer)[42][34];
 	};
 
-	/*static class Jump
+	class Jump
 	{
 	public:
-		static vector<SearchCoords&> GetNextNodes(MapControl &map, SearchCoords& coords, SearchCoords(&buffer)[42][34]);
-	};*/
+		Jump(MapControl &map, SearchCoords(&buffer)[42][34]) :map(map), buffer(buffer) {}
+		vector<SearchCoords*> GetNextNodes(SearchCoords* startState);
+	private:
+		vector<SearchCoords*> SideControl(int dx);
+		vector<SearchCoords*> JumpControl(int dx, int& x, int& y);
+		vector<SearchCoords*> Falling(int dx, int& x, int& y);
+		bool WriteToState(int x, int y, SearchCoords* prevCoord, unique_ptr<ActionHandlerFactory> action);
+
+		static GetActionFunction GetAction;
+		static const int waitTime = 7;
+
+		SearchCoords* startState;
+		MapControl &map;
+		SearchCoords(&buffer)[42][34];
+	};
 
 	class ClimbLadder
 	{
 	public:
-		static vector<SearchCoords*> GetNextNodes(MapControl &map, SearchCoords* coords, SearchCoords(&buffer)[42][34]);
+		ClimbLadder(MapControl &map, SearchCoords(&buffer)[42][34]) :map(map), buffer(buffer) {}
+		vector<SearchCoords*> GetNextNodes(SearchCoords* startState);
 	private:
-		static vector<SearchCoords*> DirectionClimb(int dx, MapControl &map, SearchCoords* coords, SearchCoords(&buffer)[42][34]);
-		static bool WriteToState(int x, int y, SearchCoords* startState, SearchCoords(&buffer)[42][34]);
+		vector<SearchCoords*> DirectionClimb(int dx);
+		bool WriteToState(int x, int y);
+
+		SearchCoords* startState;
+		MapControl &map;
+		SearchCoords(&buffer)[42][34];
 	};
 
 	/*static class ClimbRope

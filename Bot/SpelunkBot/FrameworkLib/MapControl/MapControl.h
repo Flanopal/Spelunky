@@ -4,18 +4,20 @@ class MapControl;
 
 #include "IBotAPI.h"
 #include "DataStructures.h"
+#include "FrameworkLibrary.h"
 
 using namespace std;
 
 class MapControl
 {
 public:
-	MapControl(const Coordinates& prevCoords, IBotAPI* bot) :prevPos(prevCoords), bot(bot), exitPos(-1,-1),exitFound(false)
+	MapControl(FrameworkLibrary* lib, IBotAPI* bot) :lib(lib), bot(bot), exitPos(-1,-1),exitFound(false)
 	{
 		top = left = bottom = right = -1;
 		SaveMap();
 	}
 	void Update();
+	FrameworkLibrary* GetCurrentLibrary() { return lib; }
 	bool NodeIsTerrain(int x, int y);
 	bool NodeIsTerrain(Coordinates coords);
 	bool NodeIsTerrain(SearchCoords& coords);
@@ -65,6 +67,6 @@ private:
 	double cave[42][34];
 	bool exitFound;
 	Coordinates exitPos;
-	const Coordinates& prevPos;
+	FrameworkLibrary* lib;
 	IBotAPI* bot;
 };
