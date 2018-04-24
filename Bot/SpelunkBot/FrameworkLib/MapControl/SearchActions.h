@@ -17,7 +17,7 @@ using namespace std;
 
 namespace SearchActions
 {
-	enum class FallType { withWaiting = 0, normal = 1, blocked = 2 };
+	enum class FallType { withWaiting = 0, normal = 1, blocked = 2, toLand = 3 };
 	typedef unique_ptr<ActionHandlerFactory> GetActionFunction(int x, int y, int prevX, FallType type);
 	static bool ShouldWriteIntoState(const SearchCoords* const current, const SearchCoords* const target, int cost, int lifeLost, int ropeUsed);
 	static int GetCost(int x, int y, const SearchCoords* const prevCoord);
@@ -69,23 +69,16 @@ namespace SearchActions
 		ClimbLadder(MapControl &map, SearchCoords(&buffer)[42][34]) :map(map), buffer(buffer) {}
 		vector<SearchCoords*> GetNextNodes(SearchCoords* startState);
 	private:
-		vector<SearchCoords*> DirectionClimb(int dx);
 		bool WriteToState(int x, int y);
-
+		unique_ptr<ActionHandlerFactory> GetAction(int x, int y,bool last);
 		SearchCoords* startState;
 		MapControl &map;
 		SearchCoords(&buffer)[42][34];
 	};
 
-	/*static class ClimbRope
+	class ClimbRope
 	{
 	public:
-		static vector<SearchCoords&> GetNextNodes(MapControl &map, SearchCoords& coords, SearchCoords(&buffer)[42][34]);
-	};
-
-	static class SetBomb
-	{
-	public:
-		static vector<SearchCoords&> GetNextNodes(MapControl &map, SearchCoords& coords, SearchCoords(&buffer)[42][34]);
-	};*/
+		vector<SearchCoords&> GetNextNodes(MapControl &map, SearchCoords& coords, SearchCoords(&buffer)[42][34]);
+	}; 
 }

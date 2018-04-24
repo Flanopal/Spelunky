@@ -26,6 +26,11 @@ unique_ptr<ActionHandler> MoveToActionFactory::GetAction(FrameworkLibrary* lib)
 	return lib->playerActions->movements->SideMoveAt(finalCoords.x);
 }
 
+unique_ptr<ActionHandler> MoveToAndLandActionFactory::GetAction(FrameworkLibrary* lib)
+{
+	return lib->playerActions->movements->MoveAtAndLand(finalCoords.x);
+}
+
 unique_ptr<ActionHandler> MoveForActionFactory::GetAction(FrameworkLibrary* lib)
 {
 	if (ticks > 0) return lib->playerActions->movements->MoveRightFor(ticks);
@@ -47,12 +52,27 @@ unique_ptr<ActionHandler> JumpToActionFactory::GetAction(FrameworkLibrary* lib)
 	return lib->playerActions->movements->JumpTo(finalCoords);
 }
 
+unique_ptr<ActionHandler>GetOnClimbingActionFactory::GetAction(FrameworkLibrary* lib)
+{
+	return lib->playerActions->movements->GetOnClimbing();
+}
+
 unique_ptr<ActionHandler> ClimbToActionFactory::GetAction(FrameworkLibrary* lib)
 {
 	return lib->playerActions->movements->ClimbToLevel(finalCoords.y);
 }
 
+unique_ptr<ActionHandler> LeaveClimbingActionFactory::GetAction(FrameworkLibrary* lib)
+{
+	return lib->playerActions->movements->LeaveClimable(LeaveDirection::stay);
+}
+
 unique_ptr<ActionHandler> WaitActionFactory::GetAction(FrameworkLibrary* lib)
 {
 	return lib->playerActions->movements->Wait(waitTime);
+}
+
+unique_ptr<ActionHandler> WaitForLandingActionFactory::GetAction(FrameworkLibrary* lib)
+{
+	return lib->playerActions->movements->WaitForLanding();
 }

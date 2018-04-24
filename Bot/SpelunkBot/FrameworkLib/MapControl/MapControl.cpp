@@ -37,6 +37,15 @@ bool MapControl::NodeIsClimable(SearchCoords& coords)
 	return NodeIsClimable(coords.x, coords.y);
 }
 
+bool MapControl::NodeIsUnknown(int x, int y)
+{
+	if (cave[x][y] == spUnknownNode) return true;
+	return false;
+}
+bool MapControl::NodeIsUnknown(Coordinates coords)
+{
+	return NodeIsUnknown(coords.x, coords.y);
+}
 bool MapControl::NodeIsUnknown(SearchCoords& coords)
 {
 	if (cave[coords.x][coords.y] == spUnknownNode) return true;

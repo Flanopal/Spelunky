@@ -1,9 +1,16 @@
 #pragma once
 
+class ActionListFactory;
 class MoveToActionFactory;
+class MoveForActionFactory;
+class LongJumpActionFactory;
+class ShortJumpActionFactory;
 class JumpToActionFactory;
+class GetOnClimbingActionFactory;
 class ClimbToActionFactory;
-	
+class LeaveClimbingActionFactory;
+class WaitActionFactory;
+
 #include "FrameworkLibrary.h"
 
 using namespace std;
@@ -27,6 +34,14 @@ class MoveToActionFactory :public ActionHandlerFactory
 {
 public:
 	MoveToActionFactory(double finalX,double finalY) :ActionHandlerFactory(finalX,finalY) 
+	{ actionDescription = "MF"; } //move from
+	virtual unique_ptr<ActionHandler> GetAction(FrameworkLibrary* lib);
+};
+
+class MoveToAndLandActionFactory :public ActionHandlerFactory
+{
+public:
+	MoveToAndLandActionFactory(double finalX, double finalY) :ActionHandlerFactory(finalX, finalY)
 	{ actionDescription = "MF"; } //move from
 	virtual unique_ptr<ActionHandler> GetAction(FrameworkLibrary* lib);
 };
@@ -65,11 +80,27 @@ public:
 	virtual unique_ptr<ActionHandler> GetAction(FrameworkLibrary* lib);
 };
 
+class GetOnClimbingActionFactory :public ActionHandlerFactory
+{
+public:
+	GetOnClimbingActionFactory(double finalX, double finalY) :ActionHandlerFactory(finalX, finalY)
+	{ actionDescription = "GC"; }
+	virtual unique_ptr<ActionHandler> GetAction(FrameworkLibrary* lib);
+};
+
 class ClimbToActionFactory :public ActionHandlerFactory
 {
 public:
 	ClimbToActionFactory(double finalX, double finalY) :ActionHandlerFactory(finalX, finalY)
 	{ actionDescription = "CT"; }
+	virtual unique_ptr<ActionHandler> GetAction(FrameworkLibrary* lib);
+};
+
+class LeaveClimbingActionFactory :public ActionHandlerFactory
+{
+public:
+	LeaveClimbingActionFactory(double finalX, double finalY) :ActionHandlerFactory(finalX, finalY)
+	{ actionDescription = "LC"; }
 	virtual unique_ptr<ActionHandler> GetAction(FrameworkLibrary* lib);
 };
 
@@ -81,4 +112,12 @@ public:
 	virtual unique_ptr<ActionHandler> GetAction(FrameworkLibrary* lib);
 private:
 	int waitTime;
+};
+
+class WaitForLandingActionFactory :public ActionHandlerFactory
+{
+public:
+	WaitForLandingActionFactory(double finalX, double finalY) :ActionHandlerFactory(finalX, finalY)
+	{ actionDescription = "WL"; }
+	virtual unique_ptr<ActionHandler> GetAction(FrameworkLibrary* lib);
 };

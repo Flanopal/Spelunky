@@ -25,6 +25,32 @@ void IBotAPI::SetLookUp(bool value)
 {
 	_lookUp = value;
 }
+void IBotAPI::SetRope()
+{
+	_ropep = true;
+	--ropeCount;
+}
+void IBotAPI::SetStartClimbing()
+{
+	isClimbing=true;
+}
+void IBotAPI::SetStopClimbing()
+{
+	isClimbing = false;
+}
+
+bool IBotAPI::IsClimbing()
+{
+	return isClimbing;
+}
+int IBotAPI::GetLifeCount()
+{
+	return lifeCount;
+}
+int IBotAPI::GetRopeCount()
+{
+	return ropeCount;
+}
 Coordinates IBotAPI::GetPlayerCoordinates()
 {
 	return Coordinates(GetPlayerPositionXNode(), GetPlayerPositionYNode());

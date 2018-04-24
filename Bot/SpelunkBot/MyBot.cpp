@@ -8,7 +8,7 @@ void MyBot::Update()
 	Coordinates exit = lib->mapControl->GetExitPos();
 	Coordinates coords = GetPlayerCoordinates();
 	if (!switched && action->GetState() == ActionState::finished)
-	{	
+	{
 		switched = true;
 		lib->pathSearch->FindPath(coords, exit);
 		action = lib->pathSearch->GetNextMilestone()->GetAction(&*lib);
@@ -23,7 +23,8 @@ void MyBot::Update()
 				if (fact != nullptr)
 				{
 					action = fact->GetAction(&*lib);
-					action->Start();
+					if (action->Start()) cout << "Next action started" << endl;
+					else cout << "Next action failed to start" << endl;
 				}
 				else
 				{
@@ -35,9 +36,7 @@ void MyBot::Update()
 				++cd;
 		}
 
-
-	/*int k = 0;
-	lib->Update(&k);
+	/*
 	if (action->GetState() == ActionState::finished && count == -1)
 	{
 		lib->mapControl->CoutFrame();
@@ -45,7 +44,9 @@ void MyBot::Update()
 		count++;
 	}*/
 
-	/*if (count > -1)
+	/*
+	if (climbing) cout << GetIsHanging() << endl;
+	if (count > -1)
 	{
 		if (count > 0)
 			--count;
@@ -73,6 +74,7 @@ void MyBot::Update()
 		cout << exit.x << "\n";
 		action = lib->playerActions->movements->SideMoveAt(exit.x+0.5);
 		action->Start();
+		cout << GetIsHanging() << endl;
 	}
 	else if (lib->mapControl->NodeIsClimable(_playerPositionXNode, _playerPositionYNode))
 	{

@@ -17,7 +17,8 @@ public:
 		cout << "--------Framework Output-----------\n";
 #endif
 		lib = make_unique<FrameworkLibrary>(this);
-		action = lib->playerActions->movements->MoveRightFor(1);
+		action = lib->playerActions->movements->MoveRightFor(3);
+		//action = lib->playerActions->movements->LookUpFor(50);
 		action->Start();
 		//lib->mapControl->CoutFrame();
 		//lib->mapControl->CoutMap();

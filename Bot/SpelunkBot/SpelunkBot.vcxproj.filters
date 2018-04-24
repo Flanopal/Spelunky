@@ -168,6 +168,9 @@
     <ClInclude Include="FrameworkLib\MapControl\SearchAlgorithm\SearchAlgorithmInterfaces.h">
       <Filter>Header Files\BotFramework\MemeberClasses\Space control\SearchAlgorithm</Filter>
     </ClInclude>
+    <ClInclude Include="FrameworkLib\PlayerActions\ToolsActions\ToolsActionsClasses.h">
+      <Filter>Header Files\BotFramework\MemeberClasses\Player actions\Tools actions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -253,6 +256,9 @@
     </ClCompile>
     <ClCompile Include="FrameworkLib\MapControl\ActionFactories.cpp">
       <Filter>Source Files\BotFramework\MemberClasses\SpaceControl</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameworkLib\PlayerActions\ToolsActions\ToolsActionsClasses.cpp">
+      <Filter>Source Files\BotFramework\MemberClasses\Player actions\Tools actions</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

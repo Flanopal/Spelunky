@@ -129,6 +129,7 @@
     <ClInclude Include="FrameworkLib\PlayerActions\Movements\Movements.h" />
     <ClInclude Include="FrameworkLib\PlayerActions\PlayerActions.h" />
     <ClInclude Include="FrameworkLib\PlayerActions\ToolsActions\ToolsActions.h" />
+    <ClInclude Include="FrameworkLib\PlayerActions\ToolsActions\ToolsActionsClasses.h" />
     <ClInclude Include="JordanBot.h" />
     <ClInclude Include="Bot.h" />
     <ClInclude Include="DiscoveryDan.h" />
@@ -159,6 +160,7 @@
     <ClCompile Include="FrameworkLib\PlayerActions\Movements\Movements.cpp" />
     <ClCompile Include="FrameworkLib\PlayerActions\PlayerActions.cpp" />
     <ClCompile Include="FrameworkLib\PlayerActions\ToolsActions\ToolsActions.cpp" />
+    <ClCompile Include="FrameworkLib\PlayerActions\ToolsActions\ToolsActionsClasses.cpp" />
     <ClCompile Include="JordanBot.cpp" />
     <ClCompile Include="DiscoveryDan.cpp" />
     <ClCompile Include="dllmain.cpp">

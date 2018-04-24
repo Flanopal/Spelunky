@@ -9,7 +9,6 @@ vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(Coordinates start, Coor
 	target->SetCoords((int)finish.x, (int)finish.y);
 	SearchCoords* myPos = &buffer[(int)start.x] [(int)start.y];
 	myPos->SetCoords((int)start.x, (int)start.y);
-
 	if (myPos->IsEqualCoords(target))
 	{
 		target->action = make_unique<MoveToActionFactory>(target->x + 0.5, target->y);
@@ -27,16 +26,17 @@ vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(Coordinates start, Coor
 
 	// searching
 
-	SearchCoords* bestEvaluated; // place closest to target by h*
+	SearchCoords* bestEvaluated = myPos; // place closest to target by h*
 	SearchCoords* actual; // actual state to expand
 	vector<SearchCoords*> nextStates;
 	do
 	{
 		actual = frontier.top();
 		frontier.pop();
+		if (actual->targetDistance <= bestEvaluated->targetDistance)
+			bestEvaluated = actual;
 		if (actual->IsEqualCoords(target))
 		{
-			bestEvaluated = actual;
 			break;
 		}
 		nextStates = GetNextStates(actual, buffer);
@@ -54,14 +54,14 @@ vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(Coordinates start, Coor
 
 	ShowBuffer(buffer); // debuging info about buffer structure
 
-	return CompletePath(buffer, actual);
+	return CompletePath(buffer, bestEvaluated);
 }
 
 vector<SearchCoords*> AStar::GetNextStates(SearchCoords* state, SearchCoords(&buffer)[42][34])
 {
-	//vector<SearchCoords*> ret = SearchActions::SideMove(map,buffer).GetNextNodes(state);
+	vector<SearchCoords*> ret = SearchActions::SideMove(map,buffer).GetNextNodes(state);
 	vector<SearchCoords*> help = SearchActions::Jump(map, buffer).GetNextNodes(state);
-	//ret.insert(ret.end(), help.begin(), help.end()); // append states obtained by jumping
+	ret.insert(ret.end(), help.begin(), help.end()); // append states obtained by jumping
 	//help=SearchActions::ClimbLadder::GetNextNodes(map, state, buffer);
 	//ret.insert(ret.end(), help.begin(), help.end()); // append states obtained by climbing a ladder
 	//if (state.spelunkerState.ropeCount > 0) // if ropes available, use some ropes
@@ -69,7 +69,7 @@ vector<SearchCoords*> AStar::GetNextStates(SearchCoords* state, SearchCoords(&bu
 	//	help = SearchActions::ClimbRope::GetNextNodes(map, state, buffer);
 	//	ret.insert(ret.end(), help.begin(), help.end());
 	//}
-	return help;
+	return ret;
 }
 
 
@@ -79,8 +79,9 @@ void AStar::EvaluateStatesToTarget(vector<SearchCoords*> states)
 	int targetDistance = 0;
 	for (size_t i = 0; i < size; ++i)
 	{
-		targetDistance = heuristic->GetStatePrice(states[i]);
-		states[i]->completePrice += targetDistance;
+		SearchCoords* state = states[i];
+		state->targetDistance = heuristic->GetStatePrice(states[i]);
+		state->completePrice += state->targetDistance;
 	}
 }
 

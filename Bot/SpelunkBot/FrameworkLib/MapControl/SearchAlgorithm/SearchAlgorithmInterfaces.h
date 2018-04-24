@@ -2,12 +2,12 @@
 
 class IHeuristic;
 class ISearch;
+class MapControl;
 
 #include <vector>
 
 #include "DataStructures.h"
 
-class MapControl;
 
 class IHeuristic
 {

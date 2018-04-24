@@ -8,12 +8,15 @@ class BaseMVClasses
 {
 public:
 	class MoveFor;
+	class LookUpFor;
 	class SideMoveAt;
 	class Jump;
 	class JumpToSpot;
+	class GetOnClimbing;
 	class ClimbToNodeLevel;
 	class LeaveClimbing;
 	class Wait;
+	class WaitForLanding;
 	class ActionList;
 };
 
@@ -34,6 +37,19 @@ private:
 	void MyCallback(bool stopped);
 	int dist;
 	bool left;
+	MovementExecutingWrapper* wrapper;
+};
+
+class BaseMVClasses::LookUpFor :public ActionHandler
+{
+public:
+	LookUpFor(MovementExecutingWrapper* wrapper, int ticks) :wrapper(wrapper),ticks(ticks) {}
+	virtual bool Start();
+	virtual void Stop();
+	virtual ~LookUpFor() {}
+private:
+	void MyCallback(bool stopped);
+	int ticks;
 	MovementExecutingWrapper* wrapper;
 };
 
@@ -80,10 +96,31 @@ public:
 private:
 	void MyCallback(bool stopped);
 	int dx;
+	bool terminated = false;
 	Coordinates target;
 	unique_ptr<ActionHandler> horizontalMove;
 	FrameworkLibrary* lib;
 	IBotAPI* bot;
+};
+
+class BaseMVClasses::GetOnClimbing :public ActionHandler
+{
+public:
+	GetOnClimbing(FrameworkLibrary* lib, IBotAPI* bot, MovementExecutingWrapper* wrapper) :lib(lib), bot(bot), wrapper(wrapper) {}
+	virtual bool Start();
+	virtual void Stop();
+	virtual ~GetOnClimbing() {}
+private:
+	void MyCallback(bool stopped);
+
+	double targetX;
+	double middleX;
+	int middleTick = 0;
+	unique_ptr<ActionHandler> horizontalMove;
+	unique_ptr<ActionHandler> lookUp;
+	FrameworkLibrary* lib;
+	IBotAPI* bot;
+	MovementExecutingWrapper* wrapper;
 };
 
 class BaseMVClasses::ClimbToNodeLevel :public ActionHandler
@@ -96,10 +133,15 @@ public:
 	virtual void Stop();
 	virtual ~ClimbToNodeLevel() {}
 private:
+	bool StartClimbing();
 	void MyCallback(bool stopped);
+	void StartClimbingCallback(bool stopped);
+
+	unique_ptr<ActionHandler> startClimbing;
 	double targetLvl;
 	double targetX;
 	bool up;
+	bool started = false;
 	FrameworkLibrary* lib;
 	IBotAPI* bot;
 	MovementExecutingWrapper* wrapper;
@@ -108,22 +150,19 @@ private:
 class BaseMVClasses::LeaveClimbing :public ActionHandler
 {
 public:
-	LeaveClimbing(FrameworkLibrary* lib, IBotAPI* bot, MovementExecutingWrapper* wrapper,LeaveDirection dir)
-		:lib(lib),bot(bot),wrapper(wrapper),dir(dir)
-	{
-		controler = make_unique<MovingController>(lib,bot, 3);
-	}
+	LeaveClimbing(FrameworkLibrary* lib, IBotAPI* bot, LeaveDirection dir)
+		:lib(lib),bot(bot),dir(dir)
+	{}
 	virtual bool Start();
 	virtual void Stop();
+	virtual ActionState GetState();
 	virtual ~LeaveClimbing() {}
 private:
 	void MyCallback(bool stopped);
 	LeaveDirection dir;
-	unique_ptr<MovingController> controler;
-	unique_ptr<ActionHandler> horizontalMove;
+	unique_ptr<ActionList> action;
 	FrameworkLibrary* lib;
 	IBotAPI* bot;
-	MovementExecutingWrapper* wrapper;
 };
 
 class BaseMVClasses::Wait :public ActionHandler
@@ -132,9 +171,24 @@ public:
 	Wait(MovementExecutingWrapper* wrapper, int time):wrapper(wrapper), waitTime(time) {}
 	virtual bool Start();
 	virtual void Stop();
+	virtual ~Wait() {}
 private:
 	void MyCallback(bool stopped);
 	int waitTime;
+	MovementExecutingWrapper* wrapper;
+};
+
+class BaseMVClasses::WaitForLanding :public ActionHandler
+{
+public:
+	WaitForLanding(IBotAPI* bot, MapControl* map, MovementExecutingWrapper* wrapper) :bot(bot), map(map), wrapper(wrapper) {}
+	virtual bool Start();
+	virtual void Stop();
+	virtual ~WaitForLanding() {}
+private:
+	void MyCallback(bool stopped);
+	IBotAPI* bot;
+	MapControl* map;
 	MovementExecutingWrapper* wrapper;
 };
 

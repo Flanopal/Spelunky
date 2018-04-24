@@ -88,6 +88,7 @@ protected:
 		if (stopped)
 		{
 			state = ActionState::terminated;
+			if (!stopExpected) callParentCallback(stopped);
 			return true;
 		}
 		return false;
@@ -99,7 +100,14 @@ protected:
 			return false;
 		return true;
 	}
-	bool CanBeStopped() { return GetState() == ActionState::runnig; }
+	bool stopExpected = false;
+	bool StopPrepare() 
+	{ 
+		if (GetState() != ActionState::runnig) return false;
+		stopExpected = true;
+		state = ActionState::terminated;
+		return true;
+	}
 	WrapperCallback parentCallback;
 	ActionState state=ActionState::waiting;
 };
@@ -129,10 +137,13 @@ struct SearchCoords
 	int x = 0;
 	int y = 0;
 
+	bool notToSide = false;
+
 	SearchCoords* previousState = nullptr;
 	unique_ptr<ActionHandlerFactory> action;
 
 	int completePrice = 0;
+	int targetDistance = INT32_MAX;
 	int currentDistance = INT32_MAX;
 
 	AdditionalInfo spelunkerState;
@@ -143,7 +154,7 @@ struct SearchCoords
 	{
 		previousState = prevState;
 		currentDistance = actionCount;
-		completePrice = 0;
+		completePrice = actionCount;
 		this->action = move(action);
 		spelunkerState = state;
 	}

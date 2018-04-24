@@ -116,6 +116,7 @@ void IBot::Reset()
 	_goLeft = false;
 	_jump = false;
 	_attack = false;
+	_ropep = false;
 }
 
 void IBot::UpdateBotPosition(double nodeX, double nodeY)

@@ -26,6 +26,8 @@ public:
 	bool NodeIsClimable(Coordinates coords);
 	bool NodeIsClimable(SearchCoords& coords);
 
+	bool NodeIsUnknown(int x, int y);
+	bool NodeIsUnknown(Coordinates coords);
 	bool NodeIsUnknown(SearchCoords& coords);
 	void CoutFrame()
 	{
