@@ -6,24 +6,26 @@ using namespace std;
 class ToolsActClasses
 {
 public:
-	class SetRope;
+	class SetRopeInDirection;
 };
 
 #include "DataStructures.h"
 #include "FrameworkLibrary.h"
 
-class ToolsActClasses::SetRope :public ActionHandler
+class ToolsActClasses::SetRopeInDirection :public ActionHandler
 {
 public:
-	SetRope(FrameworkLibrary* lib, IBotAPI* bot, LeaveDirection dir) :lib(lib),bot(bot),dir(dir) {}
+	SetRopeInDirection(FrameworkLibrary* lib, IBotAPI* bot, LeaveDirection dir) :lib(lib), bot(bot), dir(dir) {}
 	virtual bool Start();
 	virtual void Stop();
-	virtual ActionState GetState();
-	virtual ~SetRope() {}
+	virtual ~SetRopeInDirection() {}
 private:
 	void MyCallback(bool stopped);
-	unique_ptr<ActionHandler> horizontalMove;
+	bool StartCrouching();
+	bool PlaceRope();
+	bool atFinalPossition = false;
+	unique_ptr<ActionHandler> action;
 	LeaveDirection dir;
-	FrameworkLibrary* lib;
 	IBotAPI* bot;
+	FrameworkLibrary* lib;
 };

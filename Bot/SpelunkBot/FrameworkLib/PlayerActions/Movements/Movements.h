@@ -22,6 +22,7 @@ public:
 	void Update();
 	unique_ptr<ActionHandler> MoveLeftFor(int distance);
 	unique_ptr<ActionHandler> LookUpFor(int ticks);
+	unique_ptr<ActionHandler> CrouchFor(int ticks);
 	unique_ptr<ActionHandler> MoveRightFor(int distance);
 	unique_ptr<ActionHandler> SideMoveAt(double coordX);
 	unique_ptr<ActionHandler> MoveAtAndLand(double finalX);
@@ -32,7 +33,7 @@ public:
 	unique_ptr<ActionHandler> ClimbToLevel(double lvl);
 	unique_ptr<ActionHandler> LeaveClimable(LeaveDirection direction);
 	unique_ptr<ActionHandler> Wait(int time);
-	unique_ptr<ActionHandler> WaitForLanding();
+	unique_ptr<ActionHandler> WaitForLanding(double x);
 	unique_ptr<BaseMVClasses::ActionList> GetActionList();
 	void Jump(int ticks);
 private:

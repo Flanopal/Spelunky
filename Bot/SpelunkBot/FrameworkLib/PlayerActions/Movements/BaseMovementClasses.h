@@ -9,6 +9,7 @@ class BaseMVClasses
 public:
 	class MoveFor;
 	class LookUpFor;
+	class CrouchFor;
 	class SideMoveAt;
 	class Jump;
 	class JumpToSpot;
@@ -47,6 +48,19 @@ public:
 	virtual bool Start();
 	virtual void Stop();
 	virtual ~LookUpFor() {}
+private:
+	void MyCallback(bool stopped);
+	int ticks;
+	MovementExecutingWrapper* wrapper;
+};
+
+class BaseMVClasses::CrouchFor :public ActionHandler
+{
+public:
+	CrouchFor(MovementExecutingWrapper* wrapper, int ticks) :wrapper(wrapper), ticks(ticks) {}
+	virtual bool Start();
+	virtual void Stop();
+	virtual ~CrouchFor() {}
 private:
 	void MyCallback(bool stopped);
 	int ticks;
@@ -181,14 +195,16 @@ private:
 class BaseMVClasses::WaitForLanding :public ActionHandler
 {
 public:
-	WaitForLanding(IBotAPI* bot, MapControl* map, MovementExecutingWrapper* wrapper) :bot(bot), map(map), wrapper(wrapper) {}
+	WaitForLanding(FrameworkLibrary* lib, IBotAPI* bot, MovementExecutingWrapper* wrapper, double x) :lib(lib), bot(bot), wrapper(wrapper),targetX(x) {}
 	virtual bool Start();
 	virtual void Stop();
 	virtual ~WaitForLanding() {}
 private:
 	void MyCallback(bool stopped);
+	double targetX;
+	unique_ptr<ActionHandler> horizontalMove;
+	FrameworkLibrary* lib;
 	IBotAPI* bot;
-	MapControl* map;
 	MovementExecutingWrapper* wrapper;
 };
 
@@ -204,6 +220,7 @@ public:
 	virtual ~ActionList() {}
 private:
 	void MyCallback(bool stopped);
+	void StartNextActionInList();
 	size_t index = -1;
 	vector<unique_ptr<ActionHandler>> actions;
 	FrameworkLibrary* lib;

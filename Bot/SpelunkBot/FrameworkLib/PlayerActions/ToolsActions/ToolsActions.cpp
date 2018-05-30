@@ -12,3 +12,7 @@ bool ToolsActions::SetRope()
 	bot->SetRope();
 	return true;
 }
+unique_ptr<ActionHandler> ToolsActions::SetRopeInDirection(LeaveDirection dir)
+{
+	return make_unique<ToolsActClasses::SetRopeInDirection>(lib,bot,dir);
+}

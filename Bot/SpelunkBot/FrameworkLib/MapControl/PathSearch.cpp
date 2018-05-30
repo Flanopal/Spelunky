@@ -1,14 +1,20 @@
 #include "stdafx.h"
 #include "PathSearch.h"
 
-PathSearch::PathSearch(MapControl &map) :map(map)
+PathSearch::PathSearch(MapControl &map, IBotAPI* bot) :map(map),bot(bot)
 {
 	searcher = make_unique<AStar>(map);
 }
 
 void PathSearch::FindPath(Coordinates start, Coordinates finish)
 {
-	path = searcher->FindPath(start, finish);
+	SearchCoords initial = GetInitialState(start);
+	path = searcher->FindPath(move(initial), finish);
+}
+vector<unique_ptr<ActionHandlerFactory>> PathSearch::FindPathAndGetPath(Coordinates start, Coordinates finish)
+{
+	SearchCoords initial = GetInitialState(start);
+	return searcher->FindPath(move(initial), finish);
 }
 
 unique_ptr<ActionHandlerFactory> PathSearch::GetNextMilestone()
@@ -17,4 +23,24 @@ unique_ptr<ActionHandlerFactory> PathSearch::GetNextMilestone()
 	unique_ptr<ActionHandlerFactory> ret = move(path.back());
 	path.pop_back();
 	return move(ret);
+}
+
+vector<unique_ptr<ActionHandlerFactory>> PathSearch::GetCurrentPath()
+{
+	vector<unique_ptr<ActionHandlerFactory>> ret = move(path);
+	vector<unique_ptr<ActionHandlerFactory>> newVector;
+	path = move(newVector);
+	return move(ret);
+}
+
+SearchCoords PathSearch::GetInitialState(Coordinates start)
+{
+	SearchCoords initial;
+	initial.SetCoords(start.x, start.y);
+	if (lifeCount<1) initial.spelunkerState.lifeCount = bot->GetLifeCount();
+	else initial.spelunkerState.lifeCount = lifeCount;
+	if (ropeCount < 1) initial.spelunkerState.ropeCount = bot->GetRopeCount();
+	else  initial.spelunkerState.ropeCount = ropeCount;
+	initial.notToSide = bot->IsClimbing();
+	return move(initial);
 }

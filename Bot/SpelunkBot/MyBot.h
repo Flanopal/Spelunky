@@ -17,6 +17,7 @@ public:
 		cout << "--------Framework Output-----------\n";
 #endif
 		lib = make_unique<FrameworkLibrary>(this);
+		//action = lib->playerActions->movements->SideMoveAt(30);
 		action = lib->playerActions->movements->MoveRightFor(3);
 		//action = lib->playerActions->movements->LookUpFor(50);
 		action->Start();

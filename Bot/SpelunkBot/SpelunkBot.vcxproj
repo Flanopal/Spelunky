@@ -123,6 +123,7 @@
     <ClInclude Include="FrameworkLib\MapControl\SearchAlgorithm\AStarSearch.h" />
     <ClInclude Include="FrameworkLib\MapControl\SearchAlgorithm\Heuristic.h" />
     <ClInclude Include="FrameworkLib\MapControl\SearchAlgorithm\SearchAlgorithmInterfaces.h" />
+    <ClInclude Include="FrameworkLib\PlayerActions\ActionClasses.h" />
     <ClInclude Include="FrameworkLib\PlayerActions\Movements\BaseMovementClasses.h" />
     <ClInclude Include="FrameworkLib\PlayerActions\Movements\MovementExecuting.h" />
     <ClInclude Include="FrameworkLib\PlayerActions\Movements\MovementExecutingWrapper.h" />
@@ -154,6 +155,7 @@
     <ClCompile Include="FrameworkLib\MapControl\SearchActions.cpp" />
     <ClCompile Include="FrameworkLib\MapControl\SearchAlgorithm\AStarSearch.cpp" />
     <ClCompile Include="FrameworkLib\MapControl\SearchAlgorithm\Heuristic.cpp" />
+    <ClCompile Include="FrameworkLib\PlayerActions\ActionClasses.cpp" />
     <ClCompile Include="FrameworkLib\PlayerActions\Movements\BaseMovementClasses.cpp" />
     <ClCompile Include="FrameworkLib\PlayerActions\Movements\MovementExecuting.cpp" />
     <ClCompile Include="FrameworkLib\PlayerActions\Movements\MovementExecutingWrapper.cpp" />

@@ -13,6 +13,10 @@ unique_ptr<ActionHandler> Movements::LookUpFor(int ticks)
 {
 	return make_unique<BaseMVClasses::LookUpFor>(&*movementWrapper, ticks);
 }
+unique_ptr<ActionHandler> Movements::CrouchFor(int ticks)
+{
+	return make_unique<BaseMVClasses::CrouchFor>(&*movementWrapper, ticks);
+}
 unique_ptr<ActionHandler> Movements::MoveRightFor(int distance)
 {
 	return make_unique<BaseMVClasses::MoveFor>(&*movementWrapper, distance, false);
@@ -25,7 +29,7 @@ unique_ptr<ActionHandler> Movements::MoveAtAndLand(double finalX)
 {
 	unique_ptr<BaseMVClasses::ActionList> action = GetActionList();
 	action->AddAction(SideMoveAt(finalX));
-	action->AddAction(WaitForLanding());
+	action->AddAction(WaitForLanding(finalX));
 	return move(action);
 }
 unique_ptr<ActionHandler> Movements::LongJump()
@@ -56,9 +60,9 @@ unique_ptr<ActionHandler> Movements::Wait(int time)
 {
 	return make_unique<BaseMVClasses::Wait>(&*movementWrapper, time);
 }
-unique_ptr<ActionHandler> Movements::WaitForLanding()
+unique_ptr<ActionHandler> Movements::WaitForLanding(double x)
 {
-	return make_unique<BaseMVClasses::WaitForLanding>(bot, &*lib->mapControl, &*movementWrapper);
+	return make_unique<BaseMVClasses::WaitForLanding>(lib, bot, &*movementWrapper,x);
 }
 unique_ptr<BaseMVClasses::ActionList> Movements::GetActionList()
 {

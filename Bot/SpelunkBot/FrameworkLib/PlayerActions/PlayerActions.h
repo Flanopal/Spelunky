@@ -9,19 +9,20 @@ class PlayerActions;
 #include "DataStructures.h"
 #include "Movements.h"
 #include "ToolsActions.h"
+#include "ActionClasses.h"
 
 using namespace std;
 
 class PlayerActions
 {
 public:
-	PlayerActions(FrameworkLibrary* lib, IBotAPI* bot):bot(bot),lib(lib)
-	{
-		movements = make_unique<Movements>(bot, lib);
-		toolsActions = make_unique<ToolsActions>(bot, lib);
-	}
+	PlayerActions(FrameworkLibrary* lib, IBotAPI* bot);
+
 	unique_ptr<Movements> movements;
 	unique_ptr<ToolsActions> toolsActions;
+
+	unique_ptr<ActionHandler> ExecutePath(vector<unique_ptr<ActionHandlerFactory>> path);
+	unique_ptr<ActionHandler> GoToNodeAction(Coordinates target);
 
 private:
 	FrameworkLibrary* lib;

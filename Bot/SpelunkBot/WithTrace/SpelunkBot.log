@@ -1,2 +1,37 @@
-﻿  SearchActions.cpp
+﻿  Bot.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\actionclasses.h(62): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+  FrameworkLibrary.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\actionclasses.h(62): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+  ActionFactories.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\actionclasses.h(62): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+  MapControl.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\actionclasses.h(62): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\mapcontrol\mapcontrol.cpp(17): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\mapcontrol\mapcontrol.cpp(33): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\mapcontrol\mapcontrol.cpp(47): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+  PathSearch.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\actionclasses.h(62): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\mapcontrol\pathsearch.cpp(39): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+  SearchActions.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\actionclasses.h(62): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+  AStarSearch.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\actionclasses.h(62): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+  ActionClasses.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\actionclasses.h(62): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+  BaseMovementClasses.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\actionclasses.h(62): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\movements\basemovementclasses.cpp(221): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\movements\basemovementclasses.cpp(359): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\movements\basemovementclasses.cpp(376): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+  Movements.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\actionclasses.h(62): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+  PlayerActions.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\actionclasses.h(62): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+  ToolsActions.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\actionclasses.h(62): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+  ToolsActionsClasses.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\actionclasses.h(62): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+  MyBot.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\bot\spelunkbot\frameworklib\playeractions\actionclasses.h(62): warning C4244: argument: double se převádí na int; může dojít ke ztrátě dat.
+  Generování kódu...
   SpelunkBot.vcxproj -> C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\..\..\..\Source\spelunky_1_1\Bot.dll

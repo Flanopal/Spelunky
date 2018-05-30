@@ -18,6 +18,7 @@ unique_ptr<ActionHandler> ActionListFactory::GetAction(FrameworkLibrary* lib)
 			list->AddAction(move(factories[i]));
 		}
 	}
+	cout << "Final x " << finalCoords.x << " final y " << finalCoords.y << endl;
 	return list;
 }
 
@@ -74,5 +75,5 @@ unique_ptr<ActionHandler> WaitActionFactory::GetAction(FrameworkLibrary* lib)
 
 unique_ptr<ActionHandler> WaitForLandingActionFactory::GetAction(FrameworkLibrary* lib)
 {
-	return lib->playerActions->movements->WaitForLanding();
+	return lib->playerActions->movements->WaitForLanding(finalCoords.x);
 }

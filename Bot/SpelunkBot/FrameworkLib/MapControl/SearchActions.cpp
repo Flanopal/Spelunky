@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "SearchActions.h"
 
-bool SearchActions::ShouldWriteIntoState(const SearchCoords* const current, const SearchCoords* const target,int cost, int lifeLost, int ropeUsed)
+bool SearchActions::ShouldWriteIntoState(const SearchCoords* const current, const SearchCoords* const target, int cost, int lifeLost, int ropeUsed)
 {
+	if (current->spelunkerState.lifeCount - lifeLost <= 0) return false;
 	if (target->completePrice == 0) return true;
 	if (target->currentDistance > current->currentDistance + cost) return true;
 	if (target->spelunkerState.lifeCount < current->spelunkerState.lifeCount - lifeLost) return true;
@@ -10,83 +11,32 @@ bool SearchActions::ShouldWriteIntoState(const SearchCoords* const current, cons
 	return false;
 }
 
-int SearchActions::GetCost(int x, int y, const SearchCoords* const prevCoord)
+int SearchActions::GetCost(int x, int y, const SearchCoords* const prevCoord, MoveType type)
 {
 	int dx = abs(prevCoord->x - x);
 	int dy = abs(y - prevCoord->y);
 	if (dx != 0 && dy != 0) --dy;
-	return dx + dy;
+	switch (type)
+	{
+	case MoveType::sideMove: return dx;
+	case MoveType::jump: return 2 * dx + dy + 4;
+	case MoveType::jumpFromLadder:  return 2 * dx + dy + 4;
+	case MoveType::withoutSpeed: return dx + dy;
+	default:return 500;
+	}
 }
 
-// ------ SIDE MOVE ------
-vector<SearchCoords*> SearchActions::SideMove::GetNextNodes(SearchCoords* startState)
+
+// ----- FALL ------
+vector<SearchCoords*> SearchActions::Fall::Falling(int dx, int& x, int& y, SearchCoords* startState, SearchCoords* prevCoord)
 {
-	if (startState->notToSide) return vector<SearchCoords*>();
-	if (map.NodeIsClimable(*startState) && !map.NodeIsTerrain(startState->x, startState->y + 1)) return vector<SearchCoords*>();
 	this->startState = startState;
-	CurrentActionGetter = SearchActions::SideMove::GetAction;
-	vector<SearchCoords*> rightDir = SideControl(1);
-	vector<SearchCoords*> leftDir = SideControl(-1);
-	rightDir.insert(rightDir.end(), leftDir.begin(), leftDir.end());
-	return rightDir;
-}
-vector<SearchCoords*> SearchActions::SideMove::SideControl(int dx)
-{
-	vector<SearchCoords*> retCoords;
-	vector<SearchCoords*> help;
-	int x = startState->x;
-	int y = startState->y;
-	if (!map.NodeIsTerrain(x,y+1))
-	{
-		retCoords = Falling(dx, x, y, &buffer[x][y]);
-		if (x == 0) return retCoords; // only return possible landing spaces - cant compute further
-	}
-	x += dx; // starting from next chunk
-	while (!map.NodeIsTerrain(x,y))
-	{	
-		if (map.NodeIsClimable(x, y))
-		{
-			if (WriteToState(x, y, FallType::normal, &buffer[x - dx][y]))
-			{
-				help = ClimbLadder(map, buffer).GetNextNodes(&buffer[x][y]);
-				retCoords.insert(retCoords.end(), help.begin(), help.end());
-				retCoords.push_back(&buffer[x][y]);
-			}
-			break;
-		}
-		else if (map.NodeIsUnknown(x, y))
-		{
-			if (WriteToState(x, y, FallType::toLand, &buffer[x - dx][y]))
-			{
-				retCoords.push_back(&buffer[x][y]);
-			}
-			break;
-		}
-		else if (!map.NodeIsTerrain(x,y+1))
-		{
-			help = Falling(dx, x, y, &buffer[x - dx][y]);
-			retCoords.insert(retCoords.end(), help.begin(), help.end());
-			if (x == 0) break; // further falling distance not clear -> devide actions
-		}
-		else // not falling - horizontal move
-		{
-			if (WriteToState(x, y, FallType::normal, &buffer[x - dx][y]))
-			{
-				buffer[x][y].notToSide = true; // no other side control from this block
-				retCoords.push_back(&buffer[x][y]);
-			}
-			else break; // already visited state
-		}
-		x += dx;		
-	}
-	return retCoords;
-}
-vector<SearchCoords*> SearchActions::SideMove::Falling(int dx, int& x, int& y, SearchCoords* prevCoord)
-{
 	vector<SearchCoords*> retCoords;
 	int botY;
 	int firstY = y;
+	int column = -1;
 	bool columnBlocked = false;
+	int size = yCoordsDiffs.size() - 1;
 	while (true)
 	{
 		botY = y;
@@ -97,6 +47,7 @@ vector<SearchCoords*> SearchActions::SideMove::Falling(int dx, int& x, int& y, S
 				// finish at climeable - could be blocking
 				if (WriteToState(x, botY, FallType::toLand, prevCoord))
 				{
+					retCoords.push_back(&buffer[x][botY]);
 					vector<SearchCoords*> ret2 = ClimbLadder(map, buffer).GetNextNodes(&buffer[x][botY]);
 					retCoords.insert(retCoords.end(), ret2.begin(), ret2.end());
 				}
@@ -104,33 +55,31 @@ vector<SearchCoords*> SearchActions::SideMove::Falling(int dx, int& x, int& y, S
 			}
 			else if (map.NodeIsUnknown(x, botY))
 			{
-				if(WriteToState(x, botY, FallType::toLand, prevCoord))
+				if (WriteToState(x, botY, FallType::toLand, prevCoord))
 					retCoords.push_back(&buffer[x][botY]);
 				break;
 			}
 			++botY; // find bot in current falling column
 		}
 		--botY; // landing chunk coordinate
-		if (map.NodeIsTerrain(x,botY+1) && WriteToState(x, botY, FallType::toLand, prevCoord))
+		if (map.NodeIsTerrain(x, botY + 1) && WriteToState(x, botY, FallType::toLand, prevCoord))
 		{
 			retCoords.push_back(&buffer[x][botY]);
 		}
 		x += dx; // move to next column
-		if (y == firstY && startState->x != x-dx)
+		if (column < size)
+			++column;
+		if (column == 0 && yCoordsDiffs[column] == 1)
 		{
-			// x-dx - check, bot wasnt already falling - this case initial speed is missing
-			// next checks will fail at firt condition
-			if (map.NodeIsTerrain(x, y++) || map.NodeIsTerrain(x, y)) // add 1 to y
+			// in case of falling to second column - case of side moving
+			if (map.NodeIsTerrain(x, y++) || map.NodeIsTerrain(x, y))
 			{
-				// next column blocked, for second column special case - 2 blocking blocks
 				columnBlocked = true;
 			}
 		}
 		else
 		{
-			if (y == firstY + 1) y += 1; // third column
-			else if (y == firstY + 2) y += 3; // fourth column
-			else y += 4; // every 4 block of height is falled distance longer - other columns
+			y += yCoordsDiffs[column];
 			if (y >= botY) // entring block for next collumn is unreachable
 			{
 				x -= dx; // previsou block had further reachable possition
@@ -138,10 +87,10 @@ vector<SearchCoords*> SearchActions::SideMove::Falling(int dx, int& x, int& y, S
 				break;
 			}
 			else if (map.NodeIsTerrain(x, y)) columnBlocked = true;
-		} 
+		}
 		if (columnBlocked)
 		{
-			if (y - firstY < 3)
+			if (ContainsValue(hangColumns, column))
 			{
 				SearchCoords* coords = HangingCheck(x, y, prevCoord); // check hanged blocks
 				if (coords != nullptr) retCoords.push_back(coords);
@@ -160,36 +109,165 @@ vector<SearchCoords*> SearchActions::SideMove::Falling(int dx, int& x, int& y, S
 	}
 	return retCoords;
 }
-vector<SearchCoords*> SearchActions::SideMove::Falling(int dx, int& x, int& y, SearchCoords* startState, GetActionFunction GetAction)
+vector<SearchCoords*> SearchActions::Fall::Falling(int dx, int& x, int& y, SearchCoords* startState, SearchCoords* prevCoords, MoveType type)
 {
-	this->startState = startState;
-	CurrentActionGetter = GetAction;
-	vector<SearchCoords*> ret = move(Falling(dx, x, y, startState));
-	CurrentActionGetter = SearchActions::SideMove::GetAction;
-	return move(ret);
+	vector<int> yCoordsPrev = yCoordsDiffs;
+	vector<int> hangPrev = hangColumns;
+	GetFallingVectors(type);
+	vector<SearchCoords*> ret = Falling(dx, x, y, startState, prevCoords);
+	yCoordsDiffs = yCoordsPrev;
+	hangColumns = hangPrev;
+	return ret;
 }
-SearchCoords* SearchActions::SideMove::HangingCheck(int x, int y, SearchCoords* prevCoord)
+void SearchActions::Fall::GetFallingVectors(MoveType type)
 {
-	if (!map.NodeIsTerrain(x, y-1))
+	switch (type)
 	{
-		if(WriteToState(x, y-1, FallType::blocked, prevCoord))
+	case MoveType::sideMove:
+		yCoordsDiffs = sideMoveColumnsYCoordDiff;
+		hangColumns = sideMoveHanging;
+		return;
+	case MoveType::jump:
+		yCoordsDiffs = jumpColumnsYCoordDiff;
+		hangColumns = jumpHanging;
+		return;
+	case MoveType::jumpFromLadder:
+		yCoordsDiffs = ladderJumpColumnsYCoordDiff;
+		hangColumns = ladderJumpHanging;
+		return;
+	case MoveType::ladderWithTopBlock:
+		yCoordsDiffs = ladderWithTopBlockColumnsYCoordDiff;
+		hangColumns = ladderWithTopBlockHang;
+		return;
+	default: // MoveType::withoutSpeed
+		yCoordsDiffs = withoutInitiativeColumnsYCoordDiff;
+		hangColumns = withoutInitiativeHanging;
+		return;
+
+	}
+}
+SearchCoords* SearchActions::Fall::HangingCheck(int x, int y, SearchCoords* prevCoord)
+{
+	if (!map.NodeIsTerrain(x, y - 1))
+	{
+		if (WriteToState(x, y - 1, FallType::blocked, prevCoord))
 			return &buffer[x][y - 1];
 	}
 	return nullptr;
 }
-bool SearchActions::SideMove::WriteToState(int x, int y, FallType type, SearchCoords* prevCoord)
+bool SearchActions::Fall::WriteToState(int x, int y, FallType type, SearchCoords* prevCoord)
 {
-	int cost = GetCost(x, y, prevCoord);
+	int cost = GetCost(x, y, prevCoord, moveType);
 	if (type == FallType::blocked) cost += 2;
-	int lifeLost;
+	int lifeLost = 0;
 	SearchCoords* state = &buffer[x][y];
-	if (y - prevCoord->y > 7 || map.NodeIsUnknown(x,y)) lifeLost = 1;
-	else lifeLost = 0;
+	SearchCoords* previous = startState;
+	if (map.NodeIsUnknown(x, y)) { previous = prevCoord; lifeLost = 1; }
+	else if (y - prevCoord->y > 7) lifeLost = 1;
+
 	if (ShouldWriteIntoState(prevCoord, state, cost, lifeLost, 0))
 	{
 		state->SetCoords(x, y);
-		state->Visit(startState, prevCoord->currentDistance + cost, move(CurrentActionGetter(x,y,prevCoord->x,type)), prevCoord->spelunkerState);
+		state->Visit(previous, prevCoord->currentDistance + cost, move(ActionGetter(x, y, prevCoord->x, type)), prevCoord->spelunkerState);
 		if (lifeLost != 0) state->spelunkerState.lifeCount -= lifeLost; // too hight for surviving
+		return true;
+	}
+	return false;
+}
+bool SearchActions::Fall::ContainsValue(vector<int> values, int x)
+{
+	if (values.size() == 0) return false;
+	int* current = &values[0];
+	if (x == *current) return true;
+
+	int size = values.size() - 1;
+	for (; size > 0; --size)
+	{
+		current++;
+		if (x == *current) return true;
+	}
+	return false;
+}
+
+// ------ SIDE MOVE ------
+vector<SearchCoords*> SearchActions::SideMove::GetNextNodes(SearchCoords* startState)
+{
+	if (startState->notToSide) return vector<SearchCoords*>();
+	if (map.NodeIsClimable(*startState) && !map.NodeIsTerrain(startState->x, startState->y + 1)) return vector<SearchCoords*>();
+	this->startState = startState;
+	vector<SearchCoords*> rightDir = SideControl(1);
+	vector<SearchCoords*> leftDir = SideControl(-1);
+	rightDir.insert(rightDir.end(), leftDir.begin(), leftDir.end());
+	return rightDir;
+}
+vector<SearchCoords*> SearchActions::SideMove::SideControl(int dx)
+{
+	vector<SearchCoords*> retCoords;
+	vector<SearchCoords*> help;
+	int x = startState->x;
+	int y = startState->y;
+	if (!map.NodeIsTerrain(x, y + 1))
+	{
+		falling = make_unique<Fall>(map, buffer, *GetAction, MoveType::withoutSpeed);
+		retCoords = Falling(dx, x, y, startState);
+		return retCoords; // only return possible landing spaces - cant compute further
+	}
+	x += dx; // starting from next chunk
+	while (!map.NodeIsTerrain(x, y))
+	{
+		if (map.NodeIsClimable(x, y))
+		{
+			if (WriteToState(x, y, &buffer[x - dx][y]))
+			{
+				retCoords.push_back(&buffer[x][y]);
+				help = ClimbLadder(map, buffer).GetNextNodes(&buffer[x][y]);
+				retCoords.insert(retCoords.end(), help.begin(), help.end());
+			}
+			break;
+		}
+		else if (map.NodeIsUnknown(x, y))
+		{
+			if (WriteToState(x, y, &buffer[x - dx][y]))
+			{
+				retCoords.push_back(&buffer[x][y]);
+			}
+			break;
+		}
+		else if (!map.NodeIsTerrain(x, y + 1))
+		{
+			help = Falling(dx, x, y, &buffer[x - dx][y]);
+			retCoords.insert(retCoords.end(), help.begin(), help.end());
+			if (x == 0) break; // further falling distance not clear -> devide actions
+		}
+		else // not falling - horizontal move
+		{
+			if (WriteToState(x, y, &buffer[x - dx][y]))
+			{
+				buffer[x][y].notToSide = true; // no other side control from this block
+				retCoords.push_back(&buffer[x][y]);
+			}
+			else break; // already visited state
+		}
+		x += dx;
+	}
+	return retCoords;
+}
+vector<SearchCoords*> SearchActions::SideMove::Falling(int dx, int& x, int& y, SearchCoords* prevCoords)
+{
+	if (falling == nullptr) falling = make_unique<Fall>(map, buffer, *GetAction, MoveType::sideMove);
+	return falling->Falling(dx, x, y, startState, prevCoords);
+}
+bool SearchActions::SideMove::WriteToState(int x, int y, SearchCoords* prevCoord)
+{
+	int cost = GetCost(x, y, prevCoord, MoveType::sideMove);
+	SearchCoords* state = &buffer[x][y];
+	SearchCoords* previous = startState;
+	if (map.NodeIsUnknown(x, y)) previous = prevCoord;
+
+	if (ShouldWriteIntoState(prevCoord, state, cost, 0, 0))
+	{
+		state->SetCoords(x, y);
+		state->Visit(previous, prevCoord->currentDistance + cost, move(GetAction(x, y, prevCoord->x, FallType::normal)), prevCoord->spelunkerState);
 		return true;
 	}
 	return false;
@@ -197,7 +275,7 @@ bool SearchActions::SideMove::WriteToState(int x, int y, FallType type, SearchCo
 
 unique_ptr<ActionHandlerFactory> SearchActions::SideMove::GetAction(int x, int y, int prevX, FallType type)
 {
-	if (type == FallType::normal) 
+	if (type == FallType::normal)
 		return make_unique<MoveToActionFactory>(x + 0.5, y);
 	else if (type == FallType::withWaiting)
 	{
@@ -210,10 +288,7 @@ unique_ptr<ActionHandlerFactory> SearchActions::SideMove::GetAction(int x, int y
 	}
 	else if (type == FallType::blocked)
 	{
-		//int dx = 1;
-		//if (prevX < x) dx = -1;
-		unique_ptr<ActionListFactory> action = make_unique<ActionListFactory>(make_unique<MoveToActionFactory>(x + 0.5, y));
-		//action->AddActionFactory(make_unique<MoveForActionFactory>(x + dx + 0.5, y,-10*dx));
+		unique_ptr<ActionListFactory> action = make_unique<ActionListFactory>(make_unique<MoveToActionFactory>(x - 0.5, y));
 		action->AddActionFactory(make_unique<JumpToActionFactory>(x + 0.5, y));
 		return move(action);
 	}
@@ -228,6 +303,8 @@ unique_ptr<ActionHandlerFactory> SearchActions::SideMove::GetAction(int x, int y
 vector<SearchCoords*> SearchActions::Jump::GetNextNodes(SearchCoords* startState)
 {
 	if (!map.NodeIsClimable(*startState) && !map.NodeIsTerrain(startState->x, startState->y + 1)) return vector<SearchCoords*>();
+	if (map.NodeIsClimable(*startState) && !map.NodeIsTerrain(startState->x, startState->y + 1)) type = MoveType::jumpFromLadder;
+	else type = MoveType::jump;
 	this->startState = startState;
 	vector<SearchCoords*> rightDir = SideControl(1);
 	vector<SearchCoords*> leftDir = SideControl(-1);
@@ -238,7 +315,10 @@ vector<SearchCoords*> SearchActions::Jump::SideControl(int dx)
 {
 	int x = startState->x;
 	int y = startState->y;
-	vector<SearchCoords*> coords = JumpControl(dx, x, y); //return coords of jump
+	vector<SearchCoords*> coords;
+	if (type == MoveType::jump)
+		coords = JumpControl(dx, x, y); //return coords of jump
+	else coords = LadderJumpControl(dx, x, y);
 	if (x != 0)
 	{
 		vector<SearchCoords*> fall = Falling(dx, x, y);
@@ -258,6 +338,7 @@ vector<SearchCoords*> SearchActions::Jump::JumpControl(int dx, int& x, int& y)
 	}
 	if (map.NodeIsClimable(x, y - 1) && WriteToState(x, y - 1, prev, make_unique<LongJumpActionFactory>(x, y - 1)))
 	{
+		ret.push_back(&buffer[x][y - 1]);
 		vector<SearchCoords*> ret2 = ClimbLadder(map, buffer).GetNextNodes(&buffer[x][y - 1]);
 		ret.insert(ret.end(), ret2.begin(), ret2.end());
 	}
@@ -266,7 +347,7 @@ vector<SearchCoords*> SearchActions::Jump::JumpControl(int dx, int& x, int& y)
 	{
 		if (!map.NodeIsTerrain(x, y - 1)) // can jump on this block
 		{
-			if (WriteToState(x, y - 1, prev, make_unique<JumpToActionFactory>(x + 0.5, y-1)))
+			if (WriteToState(x, y - 1, prev, make_unique<JumpToActionFactory>(x + 0.5, y - 1)))
 				ret.push_back(&buffer[x][y - 1]); // new state found
 		}
 		else if (!map.NodeIsTerrain(x, y - 2) && !map.NodeIsTerrain(prevX, y - 2)) // 2 blocks before agent
@@ -280,7 +361,7 @@ vector<SearchCoords*> SearchActions::Jump::JumpControl(int dx, int& x, int& y)
 	if (map.NodeIsTerrain(x, y - 1))
 	{
 		if (!map.NodeIsTerrain(prevX, y - 2) && !map.NodeIsTerrain(x, y - 2))
-		{			
+		{
 			// jump on second block up - special higher jump
 			unique_ptr<ActionListFactory> actions = make_unique<ActionListFactory>(make_unique<LongJumpActionFactory>(prevX, y));
 			actions->AddActionFactory(make_unique<WaitActionFactory>(prevX, y, 10));
@@ -294,9 +375,10 @@ vector<SearchCoords*> SearchActions::Jump::JumpControl(int dx, int& x, int& y)
 		return ret;
 	}
 
-	if (map.NodeIsClimable(x, y - 1) && WriteToState(x, y - 1, prev, make_unique<LongJumpActionFactory>(x, y - 1)))
+	if (map.NodeIsClimable(x, y - 1) && WriteToState(x, y - 1, prev, make_unique<JumpToActionFactory>(x + 0.5, y - 1)))
 	{
 		// if there is ladder, we can search it now - better than search it again in search algorithm
+		ret.push_back(&buffer[x][y - 1]);
 		vector<SearchCoords*> ret2 = ClimbLadder(map, buffer).GetNextNodes(&buffer[x][y - 1]);
 		ret.insert(ret.end(), ret2.begin(), ret2.end());
 	}
@@ -323,23 +405,58 @@ vector<SearchCoords*> SearchActions::Jump::JumpControl(int dx, int& x, int& y)
 		return ret;
 	}
 
-	if (map.NodeIsClimable(x, y - 1) && WriteToState(x, y - 1, prev, make_unique<LongJumpActionFactory>(x, y - 1)))
+	if (map.NodeIsClimable(x, y - 1) && WriteToState(x, y - 1, prev, make_unique<JumpToActionFactory>(x + 0.5, y - 1)))
 	{
+		ret.push_back(&buffer[x][y - 1]);
 		vector<SearchCoords*> ret2 = ClimbLadder(map, buffer).GetNextNodes(&buffer[x][y - 1]);
 		ret.insert(ret.end(), ret2.begin(), ret2.end());
 	}
-	// else fall from typical spot x+=2*dx
-	if (map.NodeIsClimable(x, y) && !map.NodeIsTerrain(x, y)) x -= dx;
 	y -= 1;
+	return ret;
+}
+vector<SearchCoords*> SearchActions::Jump::LadderJumpControl(int dx, int& x, int& y)
+{
+	int prevX = x;
+	vector<SearchCoords*> ret;
+	SearchCoords* prev = &buffer[x][y];
+	if (!map.NodeIsTerrain(x, y - 1) && !map.NodeIsTerrain(x + dx, y - 1))
+	{
+		x += dx; // start falling
+		y -= 1;
+		if (map.NodeIsTerrain(x, y - 1))
+		{
+			// jump blocked from top, a bit different way of falling
+			ret = Falling(dx, x, y, MoveType::ladderWithTopBlock);
+			x = 0; // no other falling
+		}
+		return ret;
+	}
+	else if (!map.NodeIsTerrain(x + dx, y))
+	{
+		x += dx;
+		if (WriteToState(x, y, prev, GetAction(x, y, prevX, FallType::normal)))
+		{
+			ret.push_back(&buffer[x][y]);
+		}
+		x = 0; // no falling - will fall without initiative speed
+		return ret;
+	}
+	x = 0; // no falling
 	return ret;
 }
 vector<SearchCoords*> SearchActions::Jump::Falling(int dx, int& x, int& y)
 {
-	return move(SearchActions::SideMove(map, buffer).Falling(dx, x, y, startState, GetAction));
+	if (falling == nullptr) falling = make_unique<Fall>(map, buffer, *GetAction, type);
+	return falling->Falling(dx, x, y, startState, startState);
+}
+vector<SearchCoords*> SearchActions::Jump::Falling(int dx, int& x, int& y, MoveType newType)
+{
+	if (falling == nullptr) falling = make_unique<Fall>(map, buffer, *GetAction, type);
+	return falling->Falling(dx, x, y, startState, startState, newType);
 }
 bool SearchActions::Jump::WriteToState(int x, int y, SearchCoords* prevCoord, unique_ptr<ActionHandlerFactory> action)
 {
-	int cost = GetCost(x, y, prevCoord);
+	int cost = GetCost(x, y, prevCoord, type);
 	cost += 4;
 	SearchCoords* state = &buffer[x][y];
 	if (ShouldWriteIntoState(prevCoord, state, cost, 0, 0))
@@ -356,7 +473,6 @@ unique_ptr<ActionHandlerFactory> SearchActions::Jump::GetAction(int x, int y, in
 		return make_unique<JumpToActionFactory>(x + 0.5, y);
 	else if (type == FallType::toLand)
 	{
-		//return make_unique<JumpToActionFactory>(x + 0.5, y);
 		unique_ptr<ActionListFactory> action = make_unique<ActionListFactory>(make_unique<JumpToActionFactory>(x + 0.5, y));
 		action->AddActionFactory(make_unique<WaitForLandingActionFactory>(x + 0.5, y));
 		return move(action);
@@ -388,40 +504,45 @@ vector<SearchCoords*> SearchActions::ClimbLadder::GetNextNodes(SearchCoords* sta
 {
 	vector<SearchCoords*> ret;
 	if (!map.NodeIsClimable(*startState)) return ret;
+
 	this->startState = startState;
 	int x = startState->x;
 	int y = startState->y;
 
 	while (map.NodeIsClimable(x, --y))
 	{
-		if (WriteToState(x, y))
+		if (WriteToState(x, y, &buffer[x][y + 1]))
 			ret.push_back(&buffer[x][y]);
 	}
 	y = startState->y;
 	if (!map.NodeIsTerrain(x, y + 1))
 	{
 		unique_ptr<ActionListFactory> action = make_unique<ActionListFactory>(move(startState->action));
-		action->AddActionFactory(make_unique<GetOnClimbingActionFactory>(x+0.5, y+0.5));
+		action->AddActionFactory(make_unique<GetOnClimbingActionFactory>(x + 0.5, y + 0.5));
 		startState->action = move(action);
 		startState->notToSide = true;
 
 		while (map.NodeIsClimable(x, ++y))
 		{
-			if (WriteToState(x, y))
+			if (WriteToState(x, y, &buffer[x][y - 1]))
+			{
 				ret.push_back(&buffer[x][y]);
+			}
 		}
 	}
 	return ret;
 }
-bool SearchActions::ClimbLadder::WriteToState(int x, int y)
+bool SearchActions::ClimbLadder::WriteToState(int x, int y, SearchCoords* prevCoords)
 {
 	int cost = abs(startState->y - y) * 2;
 	SearchCoords* state = &buffer[x][y];
-	if (ShouldWriteIntoState(startState, state, cost,0, 0))
+	SearchCoords* previous = startState;
+	if (map.NodeIsUnknown(x, y)) previous = prevCoords;
+	if (ShouldWriteIntoState(startState, state, cost, 0, 0))
 	{
 		bool last = map.NodeIsTerrain(x, y + 1);
 		state->SetCoords(x, y);
-		state->Visit(startState, startState->currentDistance + cost, GetAction(x,y,last), startState->spelunkerState);
+		state->Visit(prevCoords, startState->currentDistance + cost, GetAction(x, y, last), startState->spelunkerState);
 		if (!last) state->notToSide = true;
 		return true;
 	}
@@ -429,8 +550,62 @@ bool SearchActions::ClimbLadder::WriteToState(int x, int y)
 }
 unique_ptr<ActionHandlerFactory> SearchActions::ClimbLadder::GetAction(int x, int y, bool last)
 {
-	if (!last) return make_unique<ClimbToActionFactory>(x, y+0.5);
-	unique_ptr<ActionListFactory> actions = make_unique<ActionListFactory>(make_unique<ClimbToActionFactory>(x, y+0.5));
+	if (!last) return make_unique<ClimbToActionFactory>(x, y + 0.5);
+	unique_ptr<ActionListFactory> actions = make_unique<ActionListFactory>(make_unique<ClimbToActionFactory>(x, y + 0.5));
 	actions->AddActionFactory(make_unique<LeaveClimbingActionFactory>(x, y));
 	return move(actions);
+}
+
+
+
+// ------ CLIMB ROPES ------
+vector<SearchCoords*> SearchActions::ClimbRope::GetNextNodes(SearchCoords* startState)
+{
+	if (startState->spelunkerState.ropeCount == 0) return vector<SearchCoords*>();
+	this->startState = startState;
+	int x = startState->x;
+	int y = startState->y;
+	vector<SearchCoords*> ret = GetColumn(x, y - 1, -1, LeaveDirection::stay);
+	vector<SearchCoords*> help = GetColumn(x - 1, y, 1, LeaveDirection::left);
+	ret.insert(ret.end(), help.begin(), help.end());
+	help = GetColumn(x + 1, y, 1, LeaveDirection::right);
+	ret.insert(ret.end(), help.begin(), help.end());
+	return move(ret);
+}
+vector<SearchCoords*> SearchActions::ClimbRope::GetColumn(int x, int y, int dy, LeaveDirection dir)
+{
+	vector<SearchCoords*> ret;
+	if (!ColumnWorthToUse(x, y, dy)) return ret;
+	if (!WriteToInitialPossition(x, y, dir)) return ret;
+	int length = 1;
+	int startY = y;
+	while(length<8)
+	{
+	}
+}
+bool SearchActions::ClimbRope::ColumnWorthToUse(int x, int y, int dy)
+{
+
+}
+bool SearchActions::ClimbRope::WriteToInitialPossition(int x, int y, LeaveDirection dir)
+{
+
+}
+bool SearchActions::ClimbRope::WriteToState(int x, int y, SearchCoords* prevCoords)
+{
+	int cost = abs(startState->y - y) * 2;
+	SearchCoords* state = &buffer[x][y];
+	if (ShouldWriteIntoState(startState, state, cost, 0, 0))
+	{
+		bool last = map.NodeIsTerrain(x, y + 1);
+		state->SetCoords(x, y);
+		state->Visit(prevCoords, startState->currentDistance + cost, GetAction(x, y, last), startState->spelunkerState);
+		if (!last) state->notToSide = true;
+		return true;
+	}
+	return false;
+}
+unique_ptr<ActionHandlerFactory> SearchActions::ClimbRope::GetAction(int x, int y, bool last)
+{
+
 }

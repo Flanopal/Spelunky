@@ -16,11 +16,12 @@ using namespace std;
 class ToolsActions
 {
 public:
-	ToolsActions(IBotAPI* bot, FrameworkLibrary* parent) :bot(bot), parentLib(parent) {}
+	ToolsActions(IBotAPI* bot, FrameworkLibrary* parent) :bot(bot), lib(parent) {}
 	void Attack();
 	bool SetRope();
+	unique_ptr<ActionHandler> SetRopeInDirection(LeaveDirection dir);
 
 private:
-	FrameworkLibrary* parentLib;
+	FrameworkLibrary* lib;
 	IBotAPI* bot;
 };

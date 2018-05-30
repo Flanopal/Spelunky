@@ -4,7 +4,6 @@
 void MyBot::Update()
 {
 	lib->Update();
-
 	Coordinates exit = lib->mapControl->GetExitPos();
 	Coordinates coords = GetPlayerCoordinates();
 	if (!switched && action->GetState() == ActionState::finished)

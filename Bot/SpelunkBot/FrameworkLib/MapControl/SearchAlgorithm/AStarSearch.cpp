@@ -1,15 +1,16 @@
 #include "stdafx.h"
 #include "AStarSearch.h"
 
-vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(Coordinates start, Coordinates finish)
+vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(SearchCoords start, Coordinates finish)
 {
 	// initialization
 	SearchCoords buffer[42][34]; //map of reachable states and actions leading to them with path length
 	SearchCoords* target = &buffer[(int)finish.x] [(int)finish.y];
 	target->SetCoords((int)finish.x, (int)finish.y);
-	SearchCoords* myPos = &buffer[(int)start.x] [(int)start.y];
-	myPos->SetCoords((int)start.x, (int)start.y);
-	if (myPos->IsEqualCoords(target))
+	SearchCoords* myPos = &buffer[(int)start.x] [(int)start.y]; // initialize start position
+	*myPos = move(start);
+
+	if (myPos->IsEqualCoords(target)) // already in finish
 	{
 		target->action = make_unique<MoveToActionFactory>(target->x + 0.5, target->y);
 		return CompletePath(buffer, target);
@@ -22,23 +23,32 @@ vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(Coordinates start, Coor
 	myPos->completePrice = targetDistance;
 	myPos->currentDistance = 0;
 
-	frontier.push(myPos);
-
 	// searching
 
 	SearchCoords* bestEvaluated = myPos; // place closest to target by h*
 	SearchCoords* actual; // actual state to expand
 	vector<SearchCoords*> nextStates;
+
+	if (myPos->notToSide) // starting as climbing case
+	{
+		nextStates = SearchActions::ClimbLadder(map, buffer).GetNextNodes(myPos);
+		EvaluateStatesToTarget(nextStates);
+		size_t size = nextStates.size();
+		for (size_t i = 0; i < size; ++i)
+		{
+			frontier.push(nextStates[i]);
+		}
+		nextStates.clear();
+	}
+	else frontier.push(myPos);
+
 	do
 	{
 		actual = frontier.top();
 		frontier.pop();
-		if (actual->targetDistance <= bestEvaluated->targetDistance)
-			bestEvaluated = actual;
-		if (actual->IsEqualCoords(target))
-		{
-			break;
-		}
+		bestEvaluated = GetBetterState(bestEvaluated, actual);
+		if (actual->IsEqualCoords(target)) break;
+
 		nextStates = GetNextStates(actual, buffer);
 		EvaluateStatesToTarget(nextStates);
 		size_t size = nextStates.size();
@@ -53,7 +63,7 @@ vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(Coordinates start, Coor
 	finalState = actual->spelunkerState;
 
 	ShowBuffer(buffer); // debuging info about buffer structure
-
+	cout << "Best spot x " << bestEvaluated->x << " y " << bestEvaluated->y << endl;
 	return CompletePath(buffer, bestEvaluated);
 }
 
@@ -62,8 +72,8 @@ vector<SearchCoords*> AStar::GetNextStates(SearchCoords* state, SearchCoords(&bu
 	vector<SearchCoords*> ret = SearchActions::SideMove(map,buffer).GetNextNodes(state);
 	vector<SearchCoords*> help = SearchActions::Jump(map, buffer).GetNextNodes(state);
 	ret.insert(ret.end(), help.begin(), help.end()); // append states obtained by jumping
-	//help=SearchActions::ClimbLadder::GetNextNodes(map, state, buffer);
-	//ret.insert(ret.end(), help.begin(), help.end()); // append states obtained by climbing a ladder
+	//help = SearchActions::ClimbLadder(map, buffer).GetNextNodes(state);
+	//ret.insert(ret.end(), help.begin(), help.end()); // append states obtained by jumping
 	//if (state.spelunkerState.ropeCount > 0) // if ropes available, use some ropes
 	//{
 	//	help = SearchActions::ClimbRope::GetNextNodes(map, state, buffer);
@@ -83,6 +93,13 @@ void AStar::EvaluateStatesToTarget(vector<SearchCoords*> states)
 		state->targetDistance = heuristic->GetStatePrice(states[i]);
 		state->completePrice += state->targetDistance;
 	}
+}
+
+SearchCoords* AStar::GetBetterState(SearchCoords* currentBest, SearchCoords* newState)
+{
+	if (newState->targetDistance <= currentBest->targetDistance)
+		return newState;
+	return currentBest;
 }
 
 vector<unique_ptr<ActionHandlerFactory>> AStar::CompletePath(SearchCoords(&buffer)[42][34], SearchCoords* target)
