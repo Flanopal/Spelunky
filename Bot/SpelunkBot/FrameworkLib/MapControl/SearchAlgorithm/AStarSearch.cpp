@@ -9,7 +9,6 @@ vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(SearchCoords start, Coo
 	target->SetCoords((int)finish.x, (int)finish.y);
 	SearchCoords* myPos = &buffer[(int)start.x] [(int)start.y]; // initialize start position
 	*myPos = move(start);
-
 	if (myPos->IsEqualCoords(target)) // already in finish
 	{
 		target->action = make_unique<MoveToActionFactory>(target->x + 0.5, target->y);
@@ -28,7 +27,6 @@ vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(SearchCoords start, Coo
 	SearchCoords* bestEvaluated = myPos; // place closest to target by h*
 	SearchCoords* actual; // actual state to expand
 	vector<SearchCoords*> nextStates;
-
 	if (myPos->notToSide) // starting as climbing case
 	{
 		nextStates = SearchActions::ClimbLadder(map, buffer).GetNextNodes(myPos);
@@ -41,7 +39,6 @@ vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(SearchCoords start, Coo
 		nextStates.clear();
 	}
 	else frontier.push(myPos);
-
 	do
 	{
 		actual = frontier.top();
@@ -50,6 +47,7 @@ vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(SearchCoords start, Coo
 		if (actual->IsEqualCoords(target)) break;
 
 		nextStates = GetNextStates(actual, buffer);
+
 		EvaluateStatesToTarget(nextStates);
 		size_t size = nextStates.size();
 		for (size_t i = 0; i < size; ++i)
@@ -58,7 +56,6 @@ vector<unique_ptr<ActionHandlerFactory>> AStar::FindPath(SearchCoords start, Coo
 		}
 		nextStates.clear();
 	} while (frontier.size() > 0);
-
 	//Return closes state
 	finalState = actual->spelunkerState;
 
@@ -72,16 +69,13 @@ vector<SearchCoords*> AStar::GetNextStates(SearchCoords* state, SearchCoords(&bu
 	vector<SearchCoords*> ret = SearchActions::SideMove(map,buffer).GetNextNodes(state);
 	vector<SearchCoords*> help = SearchActions::Jump(map, buffer).GetNextNodes(state);
 	ret.insert(ret.end(), help.begin(), help.end()); // append states obtained by jumping
-	//help = SearchActions::ClimbLadder(map, buffer).GetNextNodes(state);
-	//ret.insert(ret.end(), help.begin(), help.end()); // append states obtained by jumping
-	//if (state.spelunkerState.ropeCount > 0) // if ropes available, use some ropes
-	//{
-	//	help = SearchActions::ClimbRope::GetNextNodes(map, state, buffer);
-	//	ret.insert(ret.end(), help.begin(), help.end());
-	//}
+	if (state->spelunkerState.ropeCount > 0 && map.NodeIsEmpty(*state) && state->climbing==false) // if ropes available, use them
+	{
+		help = SearchActions::ClimbRope(map, buffer).GetNextNodes(state);
+		ret.insert(ret.end(), help.begin(), help.end());
+	}
 	return ret;
 }
-
 
 void AStar::EvaluateStatesToTarget(vector<SearchCoords*> states)
 {
@@ -97,6 +91,7 @@ void AStar::EvaluateStatesToTarget(vector<SearchCoords*> states)
 
 SearchCoords* AStar::GetBetterState(SearchCoords* currentBest, SearchCoords* newState)
 {
+	if (StateFilter != NULL && !(*StateFilter)(newState)) return currentBest;
 	if (newState->targetDistance <= currentBest->targetDistance)
 		return newState;
 	return currentBest;

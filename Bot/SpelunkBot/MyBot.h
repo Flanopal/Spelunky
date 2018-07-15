@@ -16,14 +16,15 @@ public:
 		cout << "\n\nMy bot constructed\n";
 		cout << "--------Framework Output-----------\n";
 #endif
+		// WARNING! DO NOT USE PLANNING IN CONSTRUCTOR - PLAYER COORDINATES ARE NOT SET YET !!!!!
+
 		lib = make_unique<FrameworkLibrary>(this);
 		//action = lib->playerActions->movements->SideMoveAt(30);
-		action = lib->playerActions->movements->MoveRightFor(3);
+		//action = lib->playerActions->movements->MoveRightFor(3);
 		//action = lib->playerActions->movements->LookUpFor(50);
-		action->Start();
+		//action->Start();
 		//lib->mapControl->CoutFrame();
 		//lib->mapControl->CoutMap();
-
 		/*action = lib->playerActions->movements->SideMoveAt(10);
 		action->Start();*/
 	}

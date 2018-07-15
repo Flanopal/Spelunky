@@ -22,7 +22,10 @@ public:
 	unique_ptr<ToolsActions> toolsActions;
 
 	unique_ptr<ActionHandler> ExecutePath(vector<unique_ptr<ActionHandlerFactory>> path);
-	unique_ptr<ActionHandler> GoToNodeAction(Coordinates target);
+	unique_ptr<ActionClasses::GoDirectlyToNode> GoDirectlyToNode(Coordinates target);
+	unique_ptr<ActionClasses::GoDirectlyToNode> GoDirectlyToNode(Coordinates target, int lifes, int ropes);
+	unique_ptr<ActionClasses::ExploreToNode> ExploreToNode(Coordinates target);
+	unique_ptr<ActionClasses::ExploreToNode> ExploreToNode(Coordinates target, int lifes, int ropes);
 
 private:
 	FrameworkLibrary* lib;

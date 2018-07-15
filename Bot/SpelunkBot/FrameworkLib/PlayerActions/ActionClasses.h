@@ -9,7 +9,8 @@ class ActionClasses
 {
 public:
 	class ExecutePath;
-	class GoToNode;
+	class GoDirectlyToNode;
+	class ExploreToNode;
 };
 
 #include "DataStructures.h"
@@ -19,7 +20,7 @@ public:
 class ActionClasses::ExecutePath :public ActionHandler
 {
 public:
-	ExecutePath(FrameworkLibrary* lib, IBotAPI* bot, vector<unique_ptr<ActionHandlerFactory>> path) :lib(lib),bot(bot), path(move(path)) {}
+	ExecutePath(FrameworkLibrary* lib, IBotAPI* bot, vector<unique_ptr<ActionHandlerFactory>> path);
 	virtual bool Start();
 	virtual void Stop();
 	virtual ~ExecutePath() {}
@@ -27,7 +28,7 @@ private:
 	void MyCallback(bool stopped);
 	bool ExecuteNextAction();
 	bool CoordControl();
-	size_t currentActionIndex = 0;
+	int currentActionIndex;
 	unique_ptr<ActionHandler> currentAction;
 
 	FrameworkLibrary* lib;
@@ -35,28 +36,32 @@ private:
 	vector<unique_ptr<ActionHandlerFactory>> path;
 };
 
-/*
-class ActionClasses::GoToNode :public ActionHandler
+
+class ActionClasses::GoDirectlyToNode :public ActionHandler
 {
 public:
-	GoToNode(FrameworkLibrary* lib, IBotAPI* bot, Coordinates target):lib(lib),bot(bot), target(target) {}
+	GoDirectlyToNode(FrameworkLibrary* lib, IBotAPI* bot, Coordinates target):lib(lib),bot(bot), target(target) 
+	{
+		cout << " targ x " << target.x << " y " << target.y << endl;
+	}
+	GoDirectlyToNode(FrameworkLibrary* lib, IBotAPI* bot, Coordinates target, int life, int rope) :lib(lib), bot(bot), target(target),life(life),rope(rope) {}
+	bool PlanPath();
 	virtual bool Start();
 	virtual void Stop();
-	virtual ~GoToNode() {}
+	virtual ~GoDirectlyToNode() {}
 private:
 	void MyCallback(bool stopped);
-	bool SetTerminatedState();
-	bool ReplanPath();
 
-	struct State;
+	bool NearbyCoords(Coordinates first, Coordinates second);
 
+	int life = -1;
+	int rope;
 	unique_ptr<ActionHandler> pathExecutor;
-	set<State> terminatedStates;
 	Coordinates target;
 	IBotAPI* bot;
 	FrameworkLibrary* lib;
 
-	struct State
+	/*struct State
 	{
 		State(int x, int y) :x(x), y(y) {}
 		State(Coordinates coords) { State(coords.x, coords.y); }
@@ -64,5 +69,25 @@ private:
 		int y;
 		bool operator==(const State& a) const { return a.x == x && a.y == y; }
 		bool operator<(const State& a) const { return x < a.x; }
-	};
-};*/
+	};*/
+};
+
+class ActionClasses::ExploreToNode : public ActionHandler
+{
+public:
+	ExploreToNode(FrameworkLibrary* lib, IBotAPI* bot, Coordinates target) :lib(lib), bot(bot), target(target) {}
+	ExploreToNode(FrameworkLibrary* lib, IBotAPI* bot, Coordinates target, int life, int rope) :lib(lib), bot(bot), target(target), life(life), rope(rope) {}
+	bool PlanPath();
+	virtual bool Start();
+	virtual void Stop();
+	virtual ~ExploreToNode() {}
+private:
+	void MyCallback(bool stopped);
+
+	int life = -1;
+	int rope;
+	unique_ptr<ActionHandler> pathExecutor;
+	Coordinates target;
+	IBotAPI* bot;
+	FrameworkLibrary* lib;
+};

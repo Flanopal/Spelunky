@@ -10,6 +10,7 @@ class GetOnClimbingActionFactory;
 class ClimbToActionFactory;
 class LeaveClimbingActionFactory;
 class WaitActionFactory;
+class SetRopeActionFactory;
 
 #include "FrameworkLibrary.h"
 
@@ -120,4 +121,14 @@ public:
 	WaitForLandingActionFactory(double finalX, double finalY) :ActionHandlerFactory(finalX, finalY)
 	{ actionDescription = "WL"; }
 	virtual unique_ptr<ActionHandler> GetAction(FrameworkLibrary* lib);
+};
+
+class SetRopeActionFactory :public ActionHandlerFactory
+{
+public:
+	SetRopeActionFactory(double finalX, double finalY, LeaveDirection dir) :dir(dir), ActionHandlerFactory(finalX, finalY)
+	{ actionDescription = "SR"; }
+	virtual unique_ptr<ActionHandler> GetAction(FrameworkLibrary* lib);
+private:
+	LeaveDirection dir;
 };

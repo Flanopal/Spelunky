@@ -4,7 +4,16 @@
 void MyBot::Update()
 {
 	lib->Update();
-	Coordinates exit = lib->mapControl->GetExitPos();
+	if (!switched)
+	{
+		//auto plan = lib->playerActions->GoDirectlyToNode(lib->mapControl->GetExitPos());
+		//plan->PlanPath();
+		action=lib->playerActions->GoDirectlyToNode(lib->mapControl->GetExitPos());
+		action->Start();
+		cout << "Started " << endl;
+		switched = true;
+	}
+	/*Coordinates exit = lib->mapControl->GetExitPos();
 	Coordinates coords = GetPlayerCoordinates();
 	if (!switched && action->GetState() == ActionState::finished)
 	{
@@ -33,7 +42,7 @@ void MyBot::Update()
 			}
 			else
 				++cd;
-		}
+		}*/
 
 	/*
 	if (action->GetState() == ActionState::finished && count == -1)

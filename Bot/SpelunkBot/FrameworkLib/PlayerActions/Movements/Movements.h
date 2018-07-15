@@ -36,6 +36,7 @@ public:
 	unique_ptr<ActionHandler> WaitForLanding(double x);
 	unique_ptr<BaseMVClasses::ActionList> GetActionList();
 	void Jump(int ticks);
+	// wrapper stop moving
 private:
 	unique_ptr<MovementExecutingWrapper> movementWrapper;
 	FrameworkLibrary* lib;

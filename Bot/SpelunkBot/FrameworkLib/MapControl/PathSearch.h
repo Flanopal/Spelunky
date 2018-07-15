@@ -23,7 +23,9 @@ class PathSearch
 public: 
 	PathSearch(MapControl &map, IBotAPI* bot);
 	void FindPath(Coordinates start, Coordinates finish);
-	vector<unique_ptr<ActionHandlerFactory>> FindPathAndGetPath(Coordinates start, Coordinates finish);
+	void FindPathToUnknown(Coordinates start, Coordinates finish);
+	vector<unique_ptr<ActionHandlerFactory>> FindAndGetPath(Coordinates start, Coordinates finish);
+	vector<unique_ptr<ActionHandlerFactory>> FindAndGetPathToUnknown(Coordinates start, Coordinates finish);
 	void SetLifesForSearch(int lifes) { lifeCount = lifes; }
 	void SetRopesForSearch(int ropes) { ropeCount = ropes; }
 	unique_ptr<ActionHandlerFactory> GetNextMilestone();
@@ -34,6 +36,7 @@ private:
 	int ropeCount = -1;
 	unique_ptr<ISearch> searcher;
 
+	bool UnknownStatesFilter(SearchCoords* state);
 	IBotAPI* bot;
 	MapControl &map;
 	vector<unique_ptr<ActionHandlerFactory>> path;

@@ -73,6 +73,12 @@
     <Filter Include="Source Files\BotFramework\MemberClasses\SpaceControl\SearchAlgorithm">
       <UniqueIdentifier>{6d5dd8bf-a575-4a7c-a7e7-eb4761f9a638}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\GOAP">
+      <UniqueIdentifier>{6d8b7305-8c9e-47f0-9880-610061ff3e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GOAP">
+      <UniqueIdentifier>{bca534d0-c299-492a-98bc-b3134b9d3d7f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -174,6 +180,12 @@
     <ClInclude Include="FrameworkLib\PlayerActions\ActionClasses.h">
       <Filter>Header Files\BotFramework\MemeberClasses\Player actions</Filter>
     </ClInclude>
+    <ClInclude Include="GOAP\GOAP.h">
+      <Filter>Header Files\GOAP</Filter>
+    </ClInclude>
+    <ClInclude Include="GOAP\GOAPActions.h">
+      <Filter>Header Files\GOAP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -265,6 +277,12 @@
     </ClCompile>
     <ClCompile Include="FrameworkLib\PlayerActions\ActionClasses.cpp">
       <Filter>Source Files\BotFramework\MemberClasses\Player actions</Filter>
+    </ClCompile>
+    <ClCompile Include="GOAP\GOAP.cpp">
+      <Filter>Source Files\GOAP</Filter>
+    </ClCompile>
+    <ClCompile Include="GOAP\GOAPActions.cpp">
+      <Filter>Source Files\GOAP</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

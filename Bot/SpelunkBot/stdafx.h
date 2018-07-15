@@ -41,7 +41,8 @@ enum TerrainType
 	spIce,
 	spSpike,
 	spSpearTrap,
-	spGameEntrance
+	spGameEntrance,
+	spRope
 };
 
 enum Collectable

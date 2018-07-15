@@ -136,6 +136,7 @@ namespace SearchActions
 		bool ColumnWorthToUse(int x, int y, int dy);
 		bool WriteToInitialPossition(int x, int y, LeaveDirection dir);
 		bool WriteToState(int x, int y, SearchCoords* prevCoords);
+		unique_ptr<ActionHandlerFactory> GetInitialAction(int x, int y, LeaveDirection dir);
 		unique_ptr<ActionHandlerFactory> GetAction(int x, int y, bool last);
 
 		SearchCoords* startState;

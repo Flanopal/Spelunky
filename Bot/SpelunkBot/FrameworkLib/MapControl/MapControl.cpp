@@ -23,9 +23,8 @@ bool MapControl::NodeIsTerrain(SearchCoords& coords)
 
 bool MapControl::NodeIsClimable(int x, int y)
 {
-	if (cave[x][y] == spLadder)
+	if (cave[x][y] == spLadder || cave[x][y] == spRope)
 		return true;
-	// rope
 	return false;
 }
 bool MapControl::NodeIsClimable(Coordinates coords)
@@ -50,6 +49,48 @@ bool MapControl::NodeIsUnknown(SearchCoords& coords)
 {
 	if (cave[coords.x][coords.y] == spUnknownNode) return true;
 	return false;
+}
+
+bool MapControl::NodeIsEmpty(int x, int y)
+{
+	if (cave[x][y] == spEmptyNode) return true;
+	return false;
+}
+bool MapControl::NodeIsEmpty(Coordinates coords)
+{
+	return NodeIsUnknown(coords.x, coords.y);
+}
+bool MapControl::NodeIsEmpty(SearchCoords& coords)
+{
+	if (cave[coords.x][coords.y] == spEmptyNode) return true;
+	return false;
+}
+
+void MapControl::EmplaceRope(LeaveDirection dir)
+{
+	Coordinates pos = bot->GetPlayerCoordinates();
+	int currentX = (int)pos.x;
+	int currentY = (int)pos.y;
+	int length = 8;
+	int dy = 1;
+	switch (dir)
+	{
+	case LeaveDirection::stay: dy = -1; currentY -= 1; --length; break;
+	case LeaveDirection::left: currentX -= 1; break;
+	case LeaveDirection::right: currentX += 1; break;
+	default: return;
+	}
+	while (NodeIsEmpty(currentX, currentY) && length > 0)
+	{
+		cave[currentX][currentY] = spRope;
+		currentY += dy;
+		--length;
+	}
+	if (dir == LeaveDirection::stay && length != 7 && NodeIsEmpty(currentX, (int)pos.y))
+	{
+		// rope placed sucessfully and agent stands at empty node -> rope is also here
+		cave[currentX][(int)pos.y] = spRope;
+	}
 }
 
 bool MapControl::ExitIsFound()
@@ -103,7 +144,7 @@ void MapControl::NodeExitCheck(int x, int y)
 		exitFound = true;
 		exitPos.x = x;
 		exitPos.y = y;
-		std::cout << "FOUND EXIT" << std::endl;
+		cout << "FOUND EXIT" << endl;
 	}
 }
 

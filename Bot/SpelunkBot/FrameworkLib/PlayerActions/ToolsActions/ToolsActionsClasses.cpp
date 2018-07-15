@@ -57,6 +57,7 @@ bool ToolsActClasses::SetRopeInDirection::PlaceRope()
 {
 	if (lib->playerActions->toolsActions->SetRope())
 	{
+		lib->mapControl->EmplaceRope(dir);
 		state = ActionState::finished;
 		return true;
 	}

@@ -11,10 +11,21 @@ void PathSearch::FindPath(Coordinates start, Coordinates finish)
 	SearchCoords initial = GetInitialState(start);
 	path = searcher->FindPath(move(initial), finish);
 }
-vector<unique_ptr<ActionHandlerFactory>> PathSearch::FindPathAndGetPath(Coordinates start, Coordinates finish)
+
+void PathSearch::FindPathToUnknown(Coordinates start, Coordinates finish)
+{
+	SearchCoords initial = GetInitialState(start);
+	path = searcher->FindPath(move(initial), finish, make_unique<function<bool(SearchCoords*)>>(bind(&PathSearch::UnknownStatesFilter, this, placeholders::_1)));
+}
+vector<unique_ptr<ActionHandlerFactory>> PathSearch::FindAndGetPath(Coordinates start, Coordinates finish)
 {
 	SearchCoords initial = GetInitialState(start);
 	return searcher->FindPath(move(initial), finish);
+}
+vector<unique_ptr<ActionHandlerFactory>> PathSearch::FindAndGetPathToUnknown(Coordinates start, Coordinates finish)
+{
+	SearchCoords initial = GetInitialState(start);
+	return searcher->FindPath(move(initial), finish, make_unique<function<bool(SearchCoords*)>>(bind(&PathSearch::UnknownStatesFilter, this, placeholders::_1)));
 }
 
 unique_ptr<ActionHandlerFactory> PathSearch::GetNextMilestone()
@@ -42,5 +53,12 @@ SearchCoords PathSearch::GetInitialState(Coordinates start)
 	if (ropeCount < 1) initial.spelunkerState.ropeCount = bot->GetRopeCount();
 	else  initial.spelunkerState.ropeCount = ropeCount;
 	initial.notToSide = bot->IsClimbing();
+	lifeCount = -1;
+	ropeCount = -1;
 	return move(initial);
+}
+
+bool PathSearch::UnknownStatesFilter(SearchCoords* state)
+{
+	return map.NodeIsUnknown(*state);
 }

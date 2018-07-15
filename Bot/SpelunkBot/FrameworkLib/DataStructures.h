@@ -138,6 +138,7 @@ struct SearchCoords
 	int y = 0;
 
 	bool notToSide = false;
+	bool climbing = false;
 
 	SearchCoords* previousState = nullptr;
 	unique_ptr<ActionHandlerFactory> action;

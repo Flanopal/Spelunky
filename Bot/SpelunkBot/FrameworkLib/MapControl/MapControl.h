@@ -29,6 +29,12 @@ public:
 	bool NodeIsUnknown(int x, int y);
 	bool NodeIsUnknown(Coordinates coords);
 	bool NodeIsUnknown(SearchCoords& coords);
+
+	bool NodeIsEmpty(int x, int y);
+	bool NodeIsEmpty(Coordinates coords);
+	bool NodeIsEmpty(SearchCoords& coords);
+
+	void EmplaceRope(LeaveDirection dir);
 	void CoutFrame()
 	{
 		cout << left << ":" << top << " " << right << ":" << bottom << "\n";

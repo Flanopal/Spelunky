@@ -77,3 +77,8 @@ unique_ptr<ActionHandler> WaitForLandingActionFactory::GetAction(FrameworkLibrar
 {
 	return lib->playerActions->movements->WaitForLanding(finalCoords.x);
 }
+
+unique_ptr<ActionHandler> SetRopeActionFactory::GetAction(FrameworkLibrary* lib)
+{
+	return lib->playerActions->toolsActions->SetRopeInDirection(dir);
+}

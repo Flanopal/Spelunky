@@ -10,7 +10,19 @@ unique_ptr<ActionHandler> PlayerActions::ExecutePath(vector<unique_ptr<ActionHan
 {
 	return make_unique<ActionClasses::ExecutePath>(lib, bot, move(path));
 }
-unique_ptr<ActionHandler> PlayerActions::GoToNodeAction(Coordinates target)
+unique_ptr<ActionClasses::GoDirectlyToNode> PlayerActions::GoDirectlyToNode(Coordinates target)
 {
-	return make_unique<ActionClasses::GoToNode>(lib, bot, target);
+	return make_unique<ActionClasses::GoDirectlyToNode>(lib, bot, target);
+}
+unique_ptr<ActionClasses::GoDirectlyToNode> PlayerActions::GoDirectlyToNode(Coordinates target, int lifes, int ropes)
+{
+	return make_unique<ActionClasses::GoDirectlyToNode>(lib, bot, target,lifes, ropes);
+}
+unique_ptr<ActionClasses::ExploreToNode> PlayerActions::ExploreToNode(Coordinates target)
+{
+	return make_unique<ActionClasses::ExploreToNode>(lib, bot, target);
+}
+unique_ptr<ActionClasses::ExploreToNode> PlayerActions::ExploreToNode(Coordinates target, int lifes, int ropes)
+{
+	return make_unique<ActionClasses::ExploreToNode>(lib, bot, target, lifes, ropes);
 }

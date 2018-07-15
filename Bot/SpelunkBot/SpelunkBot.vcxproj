@@ -61,7 +61,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WithTrace|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\..\..\Source\spelunky_1_1\</OutDir>
-    <IncludePath>C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib\MapControl;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib\PlayerActions;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib\PlayerActions\Movements;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib\PlayerActions\ToolsActions;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib\MapControl\SearchAlgorithm;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib\MapControl;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib\PlayerActions;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib\PlayerActions\Movements;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib\PlayerActions\ToolsActions;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\FrameworkLib\MapControl\SearchAlgorithm;C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Bot\SpelunkBot\GOAP;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -131,6 +131,8 @@
     <ClInclude Include="FrameworkLib\PlayerActions\PlayerActions.h" />
     <ClInclude Include="FrameworkLib\PlayerActions\ToolsActions\ToolsActions.h" />
     <ClInclude Include="FrameworkLib\PlayerActions\ToolsActions\ToolsActionsClasses.h" />
+    <ClInclude Include="GOAP\GOAP.h" />
+    <ClInclude Include="GOAP\GOAPActions.h" />
     <ClInclude Include="JordanBot.h" />
     <ClInclude Include="Bot.h" />
     <ClInclude Include="DiscoveryDan.h" />
@@ -163,6 +165,8 @@
     <ClCompile Include="FrameworkLib\PlayerActions\PlayerActions.cpp" />
     <ClCompile Include="FrameworkLib\PlayerActions\ToolsActions\ToolsActions.cpp" />
     <ClCompile Include="FrameworkLib\PlayerActions\ToolsActions\ToolsActionsClasses.cpp" />
+    <ClCompile Include="GOAP\GOAP.cpp" />
+    <ClCompile Include="GOAP\GOAPActions.cpp" />
     <ClCompile Include="JordanBot.cpp" />
     <ClCompile Include="DiscoveryDan.cpp" />
     <ClCompile Include="dllmain.cpp">

@@ -178,6 +178,7 @@ bool BaseMVClasses::JumpToSpot::Start()
 	cout << ">> JUMP TO ACTION STARTING X " << target.x << " Y "<< target.y << endl;
 	double playerX = bot->GetPlayerPositionXNode();
 	double playerY = bot->GetPlayerPositionYNode();
+	cout << "my pos " << playerX << " y:" << playerY << endl;
 	if (playerX - target.x < 0) dx = 1;
 	else dx = -1;
 	double dy = playerY - target.y;
@@ -192,7 +193,7 @@ bool BaseMVClasses::JumpToSpot::Start()
 	}
 	else
 	{
-		lib->playerActions->movements->Jump(3);
+		lib->playerActions->movements->Jump(4);
 		return true;
 	}
 }
@@ -243,8 +244,8 @@ bool BaseMVClasses::GetOnClimbing::Start()
 	int x = (int)coords.x;
 	middleX = x + 0.5;
 	targetX = middleX;
-	if (coords.x < middleX) targetX = middleX + 0.2;
-	else targetX = middleX - 0.2;
+	if (coords.x < middleX) targetX = middleX + 0.25;
+	else targetX = middleX - 0.25;
 	horizontalMove = lib->playerActions->movements->SideMoveAt(targetX);
 	lookUp = lib->playerActions->movements->LookUpFor(40);
 	lookUp->registrCallback(make_unique<function<void(bool)>>(bind(&GetOnClimbing::MyCallback, this, placeholders::_1)));
@@ -266,11 +267,11 @@ void BaseMVClasses::GetOnClimbing::Stop()
 void BaseMVClasses::GetOnClimbing::MyCallback(bool stopped)
 {
 	if (StopControl(stopped)) return;
-	if (abs(middleX - bot->GetPlayerPositionXNode()) < 0.1)
+	if (abs(middleX - bot->GetPlayerPositionXNode()) < 0.2)
 	{
 		middleTick++;
 		if (middleTick == 2)
-			lib->playerActions->movements->Jump(1);
+			lib->playerActions->movements->Jump(3);
 
 	}
 	if (middleTick == 15)
@@ -279,8 +280,10 @@ void BaseMVClasses::GetOnClimbing::MyCallback(bool stopped)
 		Finish();
 		bot->SetStartClimbing();
 	}
-	else if (middleTick > 0 && abs(targetX - bot->GetPlayerPositionXNode()) > 0.5)
+	else if (middleTick > 0 && abs(targetX - bot->GetPlayerPositionXNode()) < 0.1)
 	{
+		cout << "target x " << targetX << endl;
+		cout << "middle " << middleX << " x pos " << bot->GetPlayerPositionXNode() << endl;
 		cout << "Stopped " << endl;
 		Stop(); // action failed
 	}
@@ -502,6 +505,7 @@ bool BaseMVClasses::ActionList::Start()
 }
 void BaseMVClasses::ActionList::Stop()
 {
+	if (!StopPrepare()) return;
 	actions[index]->Stop();
 }
 ActionState BaseMVClasses::ActionList::GetState()
@@ -525,10 +529,9 @@ void BaseMVClasses::ActionList::StartNextActionInList()
 		{
 			if (actions[index] == nullptr)
 			{
-				cout << "NULL " << endl;
 				continue;
 			}
-			cout << "next action\n";
+			cout << "AL next action\n";
 			actions[index]->registrCallback(make_unique<function<void(bool)>>(bind(&ActionList::MyCallback, this, placeholders::_1)));
 			actions[index]->Start();
 		}
