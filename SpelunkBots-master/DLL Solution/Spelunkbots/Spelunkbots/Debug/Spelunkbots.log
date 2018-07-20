@@ -1,0 +1,47 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(373,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  stdafx.cpp
+  dllmain.cpp
+  SpelunkbotsConsoleOutput.cpp
+  Spelunkbots.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(36): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\stdio.h(242): note: see declaration of 'freopen'
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(793): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(794): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(976): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(977): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(1315): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(1316): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(1364): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(1365): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(1374): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(1375): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(1537): warning C4018: '<': signed/unsigned mismatch
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(1539): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(1540): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(1580): warning C4018: '<': signed/unsigned mismatch
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(1582): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(1583): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(1624): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\spelunkbots.cpp(1675): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  PerformanceStats.cpp
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(92): warning C4244: 'argument': conversion from 'double' to 'const int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(96): warning C4244: 'argument': conversion from 'double' to 'const int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(100): warning C4244: 'argument': conversion from 'double' to 'const int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(108): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(112): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(116): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(120): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(124): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(128): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(147): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\time.h(505): note: see declaration of 'localtime'
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(212): warning C4018: '<': signed/unsigned mismatch
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(223): warning C4018: '<': signed/unsigned mismatch
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(275): warning C4018: '<': signed/unsigned mismatch
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(311): warning C4018: '<': signed/unsigned mismatch
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(319): warning C4018: '<': signed/unsigned mismatch
+c:\users\flanopal\desktop\ai-spelunky\spelunkbots-master\dll solution\spelunkbots\spelunkbots\performancestats.cpp(377): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
+  Generating Code...
+     Creating library ..\..\..\Source\spelunky_1_1\Spelunkbots.lib and object ..\..\..\Source\spelunky_1_1\Spelunkbots.exp
+  Spelunkbots.vcxproj -> C:\Users\Flanopal\Desktop\AI-Spelunky\SpelunkBots-master\DLL Solution\Spelunkbots\Spelunkbots\..\..\..\Source\spelunky_1_1\Spelunkbots.dll
+  Spelunkbots.vcxproj -> ..\..\..\Source\spelunky_1_1\Spelunkbots.pdb (Partial PDB)
